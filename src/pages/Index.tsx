@@ -1,17 +1,23 @@
-import Navbar from '@/components/Navbar';
-import HeroSection from '@/components/HeroSection';
-import ComparisonSection from '@/components/ComparisonSection';
-import FilterBadges from '@/components/FilterBadges';
-import Footer from '@/components/Footer';
+import StickyHeader from '@/components/StickyHeader';
+import SearchHero from '@/components/SearchHero';
+import FilterChips from '@/components/FilterChips';
+import ComparisonEngine from '@/components/ComparisonEngine';
+import ReviewCards from '@/components/ReviewCards';
+import BottomNav from '@/components/BottomNav';
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
-      <HeroSection />
-      <FilterBadges />
-      <ComparisonSection />
-      <Footer />
+    <div className="min-h-screen bg-background relative overflow-x-hidden">
+      <StickyHeader />
+
+      <main className="pb-20">
+        <SearchHero />
+        <FilterChips />
+        <ComparisonEngine />
+        <ReviewCards />
+      </main>
+
+      <BottomNav />
     </div>
   );
 };
