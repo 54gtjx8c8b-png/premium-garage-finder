@@ -21,7 +21,7 @@ const ComparisonSection = () => {
               <span className="text-foreground/80 font-bold text-sm">AUDI</span>
             </div>
             <div className="text-right">
-              <div className="flex items-center gap-1 text-yellow-500 font-mono text-lg">
+              <div className="flex items-center gap-1 text-amber-400 font-mono text-lg">
                 <Star className="w-4 h-4 fill-current" />
                 <span>3.2</span>
               </div>
