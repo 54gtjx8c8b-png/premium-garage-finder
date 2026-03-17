@@ -2,6 +2,7 @@ import { Zap, Wrench, PaintBucket, AlertTriangle, Cog } from 'lucide-react';
 import { useState } from 'react';
 
 const filters = [
+  { id: 'all', label: 'All', icon: null },
   { id: 'ev', label: 'EV Specialist', icon: Zap },
   { id: 'mechanic', label: 'Mechanical', icon: Wrench },
   { id: 'body', label: 'Bodywork', icon: PaintBucket },
@@ -10,7 +11,7 @@ const filters = [
 ];
 
 const FilterChips = () => {
-  const [active, setActive] = useState('mechanic');
+  const [active, setActive] = useState('all');
 
   return (
     <section className="px-4 py-3 max-w-lg mx-auto">
@@ -23,14 +24,14 @@ const FilterChips = () => {
               key={filter.id}
               onClick={() => setActive(filter.id)}
               className={`
-                flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-medium transition-all duration-200 whitespace-nowrap shrink-0
+                flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-medium transition-all duration-150 whitespace-nowrap shrink-0 border
                 ${isActive
-                  ? 'bg-primary text-primary-foreground font-bold gold-glow'
-                  : 'glass text-muted-foreground hover:text-foreground hover:border-primary/30'
+                  ? 'bg-primary text-primary-foreground border-primary font-semibold'
+                  : 'bg-transparent text-muted-foreground border-border hover:text-foreground hover:border-foreground/20'
                 }
               `}
             >
-              <Icon className="w-3 h-3" />
+              {Icon && <Icon className="w-3 h-3" />}
               {filter.label}
             </button>
           );

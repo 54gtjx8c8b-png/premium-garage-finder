@@ -1,28 +1,36 @@
-import { Bell, User } from 'lucide-react';
+import { Search, BadgeCheck } from 'lucide-react';
+import { useState } from 'react';
 
 const StickyHeader = () => {
-  return (
-    <header className="fixed top-0 left-0 right-0 z-50 h-14 glass">
-      <div className="max-w-lg mx-auto h-full px-4 flex items-center justify-between">
-        <div className="flex items-center gap-1.5">
-          <div className="w-7 h-7 rounded-lg bg-primary/15 flex items-center justify-center gold-glow">
-            <span className="text-primary font-bold text-[9px] font-mono">TM</span>
-          </div>
-          <span className="text-foreground font-display text-sm tracking-[0.06em]">
-            Trust<span className="text-primary">marq</span>
-          </span>
-        </div>
+  const [query, setQuery] = useState('');
 
-        <div className="flex items-center gap-1">
-          <button className="relative w-10 h-10 flex items-center justify-center rounded-xl hover:bg-glass-hover transition-colors duration-200">
-            <Bell className="w-[18px] h-[18px] text-muted-foreground" />
-            <span className="absolute top-2 right-2.5 w-2 h-2 rounded-full bg-primary gold-glow" />
+  return (
+    <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border">
+      <div className="max-w-lg mx-auto px-4">
+        {/* Top row */}
+        <div className="h-12 flex items-center justify-between">
+          <div className="flex items-center gap-1">
+            <span className="text-foreground font-bold text-[15px] tracking-tight">
+              TRUSTMARQ
+            </span>
+            <BadgeCheck className="w-4 h-4 text-primary" />
+          </div>
+          <button className="text-xs text-primary font-semibold hover:text-primary/80 transition-colors">
+            Sign in
           </button>
-          <button className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-glass-hover transition-colors duration-200">
-            <div className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center border border-glass-border">
-              <User className="w-3.5 h-3.5 text-muted-foreground" />
-            </div>
-          </button>
+        </div>
+        {/* Search row */}
+        <div className="pb-3">
+          <div className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-full bg-card border border-border focus-within:border-primary/50 transition-colors">
+            <Search className="w-4 h-4 text-muted-foreground shrink-0" />
+            <input
+              type="text"
+              placeholder="Search city or car brand..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="bg-transparent border-none outline-none text-foreground placeholder:text-muted-foreground w-full text-sm"
+            />
+          </div>
         </div>
       </div>
     </header>

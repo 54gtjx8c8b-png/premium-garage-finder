@@ -11,8 +11,8 @@ const BottomNav = () => {
   const [active, setActive] = useState('home');
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 glass safe-bottom">
-      <div className="max-w-lg mx-auto flex items-center justify-around h-16 px-2">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-t border-border safe-bottom">
+      <div className="max-w-lg mx-auto flex items-center justify-around h-14 px-2">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = active === tab.id;
@@ -20,16 +20,12 @@ const BottomNav = () => {
             <button
               key={tab.id}
               onClick={() => setActive(tab.id)}
-              className="flex flex-col items-center justify-center gap-0.5 w-20 py-1 transition-all duration-200 group"
+              className="flex flex-col items-center justify-center gap-0.5 w-20 py-1 transition-all duration-150"
             >
-              <div className={`p-1.5 rounded-xl transition-all duration-200 ${
-                isActive ? 'bg-primary/15 gold-glow' : ''
-              }`}>
-                <Icon className={`w-5 h-5 transition-colors duration-200 ${
-                  isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'
-                }`} />
-              </div>
-              <span className={`text-[10px] font-medium transition-colors duration-200 ${
+              <Icon className={`w-5 h-5 transition-colors ${
+                isActive ? 'text-primary' : 'text-muted-foreground'
+              }`} />
+              <span className={`text-[10px] font-medium transition-colors ${
                 isActive ? 'text-primary' : 'text-muted-foreground'
               }`}>
                 {tab.label}
