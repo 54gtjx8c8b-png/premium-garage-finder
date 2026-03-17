@@ -10,30 +10,28 @@ const SearchHero = () => {
   const [showBrandSuggestions, setShowBrandSuggestions] = useState(false);
   const [showCitySuggestions, setShowCitySuggestions] = useState(false);
 
-  const filteredBrands = brands.filter(b =>
-    b.toLowerCase().includes(brand.toLowerCase())
-  );
-  const filteredCities = cities.filter(c =>
-    c.toLowerCase().includes(city.toLowerCase())
-  );
+  const filteredBrands = brands.filter(b => b.toLowerCase().includes(brand.toLowerCase()));
+  const filteredCities = cities.filter(c => c.toLowerCase().includes(city.toLowerCase()));
 
   return (
     <section className="px-4 pt-20 pb-6 max-w-lg mx-auto">
       {/* Background glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[300px] h-[300px] bg-primary/8 rounded-full blur-[100px] pointer-events-none animate-glow-pulse" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[300px] h-[300px] bg-primary/5 rounded-full blur-[120px] pointer-events-none animate-glow-pulse" />
 
       <div className="relative space-y-4 text-center">
-        <span className="inline-block text-primary label-xs tracking-[0.2em]">
-          Expertise Certifiée
+        <span className="inline-block text-primary label-xs tracking-[0.25em]">
+          Automotive Excellence
         </span>
-        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground text-balance leading-[1.15]">
-          L'élite de la
+        <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-foreground text-balance leading-[1.15]">
+          Identify
           <br />
-          mécanique.
-          <span className="block text-muted-foreground text-2xl sm:text-3xl mt-1 font-semibold">
-            Près de chez vous.
-          </span>
+          <span className="text-primary">Automotive</span>
+          <br />
+          Excellence.
         </h1>
+        <p className="text-muted-foreground text-sm max-w-[280px] mx-auto leading-relaxed">
+          Compare dealerships and independents with verified Google reviews.
+        </p>
 
         {/* Search Card */}
         <div className="mt-6 glass-elevated rounded-2xl p-3 space-y-2">
@@ -43,7 +41,7 @@ const SearchHero = () => {
               <Car className="w-4 h-4 text-primary shrink-0" />
               <input
                 type="text"
-                placeholder="Marque du véhicule..."
+                placeholder="Brand (Audi, Porsche...)"
                 value={brand}
                 onChange={(e) => { setBrand(e.target.value); setShowBrandSuggestions(true); }}
                 onFocus={() => setShowBrandSuggestions(true)}
@@ -74,7 +72,7 @@ const SearchHero = () => {
               <MapPin className="w-4 h-4 text-primary shrink-0" />
               <input
                 type="text"
-                placeholder="Ville ou code postal..."
+                placeholder="City or postal code..."
                 value={city}
                 onChange={(e) => { setCity(e.target.value); setShowCitySuggestions(true); }}
                 onFocus={() => setShowCitySuggestions(true)}
@@ -100,9 +98,9 @@ const SearchHero = () => {
           </div>
 
           {/* Search Button */}
-          <button className="w-full bg-primary text-primary-foreground font-bold py-3.5 rounded-xl neon-glow-strong hover:bg-primary/90 transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2 text-sm">
+          <button className="w-full bg-primary text-primary-foreground font-bold py-3.5 rounded-xl gold-glow-strong hover:bg-primary/90 transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2 text-sm">
             <Search className="w-4 h-4" />
-            Comparer les garages
+            Compare Garages
           </button>
         </div>
 
@@ -110,15 +108,15 @@ const SearchHero = () => {
         <div className="flex flex-wrap justify-center gap-x-5 gap-y-2 pt-4 text-muted-foreground text-[11px]">
           <span className="flex items-center gap-1.5">
             <span className="w-1 h-1 rounded-full bg-primary" />
-            2 000+ garages
+            2,000+ garages
           </span>
           <span className="flex items-center gap-1.5">
             <span className="w-1 h-1 rounded-full bg-success" />
-            Avis vérifiés
+            Verified reviews
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="w-1 h-1 rounded-full bg-gold" />
-            100% gratuit
+            <span className="w-1 h-1 rounded-full bg-primary" />
+            100% free
           </span>
         </div>
       </div>

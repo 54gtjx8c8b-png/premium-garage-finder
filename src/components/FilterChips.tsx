@@ -3,10 +3,10 @@ import { useState } from 'react';
 
 const filters = [
   { id: 'ev', label: 'EV Specialist', icon: Zap },
-  { id: 'mechanic', label: 'Mécanique', icon: Wrench },
-  { id: 'body', label: 'Carrosserie', icon: PaintBucket },
-  { id: 'emergency', label: 'Urgence', icon: AlertTriangle },
-  { id: 'parts', label: 'Pièces OEM', icon: Cog },
+  { id: 'mechanic', label: 'Mechanical', icon: Wrench },
+  { id: 'body', label: 'Bodywork', icon: PaintBucket },
+  { id: 'emergency', label: 'Emergency', icon: AlertTriangle },
+  { id: 'parts', label: 'Official Parts', icon: Cog },
 ];
 
 const FilterChips = () => {
@@ -25,7 +25,7 @@ const FilterChips = () => {
               className={`
                 flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-medium transition-all duration-200 whitespace-nowrap shrink-0
                 ${isActive
-                  ? 'bg-primary text-primary-foreground font-bold neon-glow'
+                  ? 'bg-primary text-primary-foreground font-bold gold-glow'
                   : 'glass text-muted-foreground hover:text-foreground hover:border-primary/30'
                 }
               `}

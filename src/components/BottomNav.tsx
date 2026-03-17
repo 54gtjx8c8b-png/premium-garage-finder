@@ -1,15 +1,14 @@
-import { Compass, GitCompare, CalendarCheck, User } from 'lucide-react';
+import { Home, Trophy, Bookmark } from 'lucide-react';
 import { useState } from 'react';
 
 const tabs = [
-  { id: 'explore', label: 'Explorer', icon: Compass },
-  { id: 'compare', label: 'Comparer', icon: GitCompare },
-  { id: 'bookings', label: 'Réservations', icon: CalendarCheck },
-  { id: 'profile', label: 'Profil', icon: User },
+  { id: 'home', label: 'Home', icon: Home },
+  { id: 'rankings', label: 'Top Rankings', icon: Trophy },
+  { id: 'garage', label: 'My Garage', icon: Bookmark },
 ];
 
 const BottomNav = () => {
-  const [active, setActive] = useState('explore');
+  const [active, setActive] = useState('home');
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 glass safe-bottom">
@@ -21,10 +20,10 @@ const BottomNav = () => {
             <button
               key={tab.id}
               onClick={() => setActive(tab.id)}
-              className="flex flex-col items-center justify-center gap-0.5 w-16 py-1 transition-all duration-200 group"
+              className="flex flex-col items-center justify-center gap-0.5 w-20 py-1 transition-all duration-200 group"
             >
               <div className={`p-1.5 rounded-xl transition-all duration-200 ${
-                isActive ? 'bg-primary/15 neon-glow' : ''
+                isActive ? 'bg-primary/15 gold-glow' : ''
               }`}>
                 <Icon className={`w-5 h-5 transition-colors duration-200 ${
                   isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'
