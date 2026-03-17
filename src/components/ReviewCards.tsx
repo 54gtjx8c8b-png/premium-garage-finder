@@ -1,10 +1,10 @@
 import { Star, TrendingDown, Gauge, Sparkles, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import TrustmarqBadge from '@/components/TrustmarqBadge';
 
 interface QualityBarProps {
   label: string;
   value: number;
-  color?: string;
 }
 
 const QualityBar = ({ label, value }: QualityBarProps) => (
@@ -22,38 +22,73 @@ const QualityBar = ({ label, value }: QualityBarProps) => (
   </div>
 );
 
+const PriceQualityChart = () => (
+  <div className="p-3 rounded-xl bg-secondary/40 border border-glass-border">
+    <div className="flex items-center gap-1.5 mb-2">
+      <span className="label-xs text-muted-foreground">Price vs Quality</span>
+    </div>
+    <div className="relative h-24 w-full">
+      {/* Y-axis */}
+      <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-between text-[8px] text-muted-foreground font-mono pr-1">
+        <span>High</span>
+        <span>Low</span>
+      </div>
+      {/* X-axis */}
+      <div className="absolute bottom-0 left-6 right-0 flex justify-between text-[8px] text-muted-foreground font-mono">
+        <span>Low Quality</span>
+        <span>High Quality</span>
+      </div>
+      {/* Grid */}
+      <div className="absolute left-6 top-0 right-0 bottom-4 border-l border-b border-glass-border">
+        {/* Dealer dot */}
+        <div className="absolute top-2 left-[30%] -translate-x-1/2 flex flex-col items-center gap-0.5">
+          <div className="w-3 h-3 rounded-full bg-destructive/80 border-2 border-destructive" />
+          <span className="text-[7px] text-muted-foreground whitespace-nowrap">Dealer</span>
+        </div>
+        {/* Independent dot */}
+        <div className="absolute bottom-6 right-[15%] -translate-x-1/2 flex flex-col items-center gap-0.5">
+          <div className="w-3.5 h-3.5 rounded-full bg-primary/80 border-2 border-primary gold-glow" />
+          <span className="text-[7px] text-primary whitespace-nowrap">Independent</span>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 const ReviewCards = () => {
   const garages = [
     {
       name: 'AutoPrecision Paris 16',
-      specialty: 'Porsche & Groupe VW',
+      specialty: 'Porsche & VW Group',
       rating: 4.9,
       reviews: 127,
-      keyInsight: 'Économisez 40% vs Concession',
+      score: 96,
+      keyInsight: 'Save 40% vs Dealership',
       insightIcon: TrendingDown,
       quality: { speed: 92, cleanliness: 95, transparency: 98 },
-      quote: "Diagnostic ultra-précis en 20 min. Suivi personnalisé impeccable.",
-      badges: ['Porsche Specialist', 'Pièces OEM'],
+      quote: "Ultra-precise diagnostics in 20 min. Impeccable personalized follow-up.",
+      badges: ['Porsche Specialist', 'OEM Parts'],
     },
     {
       name: 'ElectroDrive Bordeaux',
-      specialty: 'Tesla & EV Spécialiste',
+      specialty: 'Tesla & EV Specialist',
       rating: 4.7,
       reviews: 84,
-      keyInsight: 'N°1 pour les véhicules électriques',
+      score: 93,
+      keyInsight: '#1 for Electric Vehicles',
       insightIcon: Sparkles,
       quality: { speed: 88, cleanliness: 94, transparency: 96 },
-      quote: "Le seul garage qui comprend vraiment les Tesla. Calibrage parfait.",
-      badges: ['EV Certified', 'Urgence 24h'],
+      quote: "The only garage that truly understands Tesla. Perfect calibration.",
+      badges: ['EV Certified', '24h Emergency'],
     },
   ];
 
   return (
     <section className="px-4 py-6 max-w-lg mx-auto space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-bold tracking-tight text-foreground">Top Spécialistes</h2>
+        <h2 className="font-display text-lg font-bold tracking-tight text-foreground">Top Specialists</h2>
         <button className="label-xs text-primary hover:text-primary/80 transition-colors">
-          Voir tout
+          View all
         </button>
       </div>
 
@@ -62,9 +97,16 @@ const ReviewCards = () => {
         return (
           <div
             key={garage.name}
-            className="glass-elevated rounded-2xl p-4 space-y-3 animate-fade-in"
+            className="glass-elevated rounded-2xl p-4 space-y-3 animate-fade-in relative"
             style={{ animationDelay: `${index * 150}ms` }}
           >
+            {/* Trustmarq Badge */}
+            {garage.score >= 90 && (
+              <div className="absolute -top-3 right-4">
+                <TrustmarqBadge score={garage.score} size="sm" />
+              </div>
+            )}
+
             {/* Header */}
             <div className="flex items-start justify-between">
               <div className="flex-1">
@@ -73,10 +115,10 @@ const ReviewCards = () => {
               </div>
               <div className="flex flex-col items-end">
                 <div className="flex items-center gap-1">
-                  <Star className="w-3.5 h-3.5 fill-gold text-gold" />
+                  <Star className="w-3.5 h-3.5 fill-primary text-primary" />
                   <span className="font-mono-data text-base font-bold text-foreground">{garage.rating}</span>
                 </div>
-                <span className="label-xs text-muted-foreground">{garage.reviews} avis</span>
+                <span className="label-xs text-muted-foreground">{garage.reviews} reviews</span>
               </div>
             </div>
 
@@ -95,15 +137,18 @@ const ReviewCards = () => {
               <span className="text-xs text-success font-semibold">{garage.keyInsight}</span>
             </div>
 
+            {/* Price vs Quality Chart */}
+            <PriceQualityChart />
+
             {/* Service Quality */}
             <div className="space-y-2">
               <div className="flex items-center gap-1.5">
                 <Gauge className="w-3 h-3 text-muted-foreground" />
-                <span className="label-xs text-muted-foreground">Qualité de Service</span>
+                <span className="label-xs text-muted-foreground">Service Quality</span>
               </div>
-              <QualityBar label="Rapidité" value={garage.quality.speed} />
-              <QualityBar label="Propreté" value={garage.quality.cleanliness} />
-              <QualityBar label="Transparence" value={garage.quality.transparency} />
+              <QualityBar label="Speed" value={garage.quality.speed} />
+              <QualityBar label="Cleanliness" value={garage.quality.cleanliness} />
+              <QualityBar label="Transparency" value={garage.quality.transparency} />
             </div>
 
             {/* Quote */}
@@ -117,8 +162,8 @@ const ReviewCards = () => {
             </div>
 
             {/* Book Button */}
-            <Button variant="neon" className="w-full text-xs" size="sm">
-              Réserver maintenant
+            <Button variant="gold" className="w-full text-xs" size="sm">
+              Secure an Appointment
             </Button>
           </div>
         );

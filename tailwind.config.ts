@@ -15,6 +15,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['Playfair Display', 'Georgia', 'serif'],
         mono: ['JetBrains Mono', 'monospace'],
       },
       colors: {
@@ -60,13 +61,15 @@ export default {
           border: "hsl(var(--glass-border))",
           hover: "hsl(var(--glass-hover))",
         },
-        neon: {
-          glow: "hsl(var(--neon-glow))",
-          border: "hsl(var(--neon-border))",
-        },
         gold: {
           DEFAULT: "hsl(var(--gold))",
           foreground: "hsl(var(--gold-foreground))",
+          glow: "hsl(var(--gold-glow))",
+          border: "hsl(var(--gold-border))",
+        },
+        silver: {
+          DEFAULT: "hsl(var(--silver))",
+          muted: "hsl(var(--silver-muted))",
         },
         success: "hsl(var(--success))",
         warning: "hsl(var(--warning))",
@@ -101,17 +104,9 @@ export default {
           "0%": { opacity: "0", transform: "translateY(12px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
-        "fade-out": {
-          "0%": { opacity: "1", transform: "translateY(0)" },
-          "100%": { opacity: "0", transform: "translateY(12px)" },
-        },
         "scale-in": {
           "0%": { transform: "scale(0.95)", opacity: "0" },
           "100%": { transform: "scale(1)", opacity: "1" },
-        },
-        "slide-up": {
-          "0%": { transform: "translateY(100%)", opacity: "0" },
-          "100%": { transform: "translateY(0)", opacity: "1" },
         },
         "glow-pulse": {
           "0%, 100%": { opacity: "0.4", transform: "scale(1)" },
@@ -125,17 +120,20 @@ export default {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-6px)" },
         },
+        "seal-spin": {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in": "fade-in 0.5s cubic-bezier(0.2, 0, 0, 1) forwards",
-        "fade-out": "fade-out 0.3s ease-out forwards",
         "scale-in": "scale-in 0.4s cubic-bezier(0.2, 0, 0, 1) forwards",
-        "slide-up": "slide-up 0.5s cubic-bezier(0.2, 0, 0, 1) forwards",
         "glow-pulse": "glow-pulse 4s ease-in-out infinite",
         "shimmer": "shimmer 2s linear infinite",
         "float": "float 6s ease-in-out infinite",
+        "seal-spin": "seal-spin 20s linear infinite",
       },
     },
   },
