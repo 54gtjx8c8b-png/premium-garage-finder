@@ -1,4 +1,5 @@
 import { Star, TrendingDown, Gauge, Sparkles, BadgeCheck, Eye } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 
 const QualityBar = ({ label, value }: { label: string; value: number }) => (
