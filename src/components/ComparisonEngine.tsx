@@ -151,9 +151,10 @@ const ComparisonEngine = () => {
               <Calendar className="w-3 h-3" />
               Voir les dispos
             </Button>
-          </div>
+          </motion.div>
         )}
-      </div>
+        </motion.div>
+      </AnimatePresence>
     </section>
   );
 };
