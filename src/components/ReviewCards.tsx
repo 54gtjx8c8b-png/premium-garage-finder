@@ -129,7 +129,7 @@ const ReviewCards = () => {
               <Button className="w-full text-xs md:text-sm" size="sm">
                 Comparer · Voir les dispos
               </Button>
-            </div>
+            </motion.div>
           );
         })}
       </div>
