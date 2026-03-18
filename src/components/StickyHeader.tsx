@@ -42,7 +42,12 @@ const StickyHeader = () => {
               return (
                 <button
                   key={link.id}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary/60 transition-all duration-150"
+                  onClick={() => setActiveNav(link.id)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-150 ${
+                    activeNav === link.id
+                      ? 'bg-primary/10 text-primary'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-secondary/60'
+                  }`}
                 >
                   <Icon className="w-4 h-4" />
                   {link.label}
