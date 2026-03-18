@@ -47,86 +47,88 @@ const ReviewCards = () => {
   ];
 
   return (
-    <section className="px-4 py-5 max-w-lg mx-auto space-y-3">
-      <div className="flex items-center justify-between">
-        <h2 className="text-base font-bold tracking-tight text-foreground">Top Rated</h2>
-        <button className="text-xs text-primary font-semibold hover:text-primary/80 transition-colors">
+    <section className="px-4 py-5 max-w-lg mx-auto lg:max-w-none lg:px-0">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-base md:text-lg font-bold tracking-tight text-foreground">Top Rated</h2>
+        <button className="text-xs md:text-sm text-primary font-semibold hover:text-primary/80 transition-colors">
           View all
         </button>
       </div>
 
-      {garages.map((garage, index) => {
-        const InsightIcon = garage.insightIcon;
-        return (
-          <div
-            key={garage.name}
-            className="surface-card p-4 space-y-3 animate-fade-in"
-            style={{ animationDelay: `${index * 100}ms` }}
-          >
-            {/* Header */}
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <div className="flex items-center gap-1.5">
-                  <h3 className="text-sm font-semibold text-foreground leading-tight">{garage.name}</h3>
-                  {garage.verified && <BadgeCheck className="w-3.5 h-3.5 text-primary shrink-0" />}
+      <div className="space-y-3 md:grid md:grid-cols-2 md:gap-4 md:space-y-0 lg:grid-cols-1 lg:gap-3">
+        {garages.map((garage, index) => {
+          const InsightIcon = garage.insightIcon;
+          return (
+            <div
+              key={garage.name}
+              className="surface-card p-4 md:p-5 space-y-3 animate-fade-in"
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
+              {/* Header */}
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center gap-1.5">
+                    <h3 className="text-sm md:text-base font-semibold text-foreground leading-tight">{garage.name}</h3>
+                    {garage.verified && <BadgeCheck className="w-3.5 h-3.5 md:w-4 md:h-4 text-primary shrink-0" />}
+                  </div>
+                  <p className="text-muted-foreground text-[11px] md:text-xs mt-0.5">{garage.specialty}</p>
                 </div>
-                <p className="text-muted-foreground text-[11px] mt-0.5">{garage.specialty}</p>
-              </div>
-              <div className="flex flex-col items-end gap-0.5">
-                <div className="flex items-center gap-1">
-                  <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                  <span className="font-mono-data text-base font-bold text-foreground">{garage.rating}</span>
+                <div className="flex flex-col items-end gap-0.5">
+                  <div className="flex items-center gap-1">
+                    <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                    <span className="font-mono-data text-base md:text-lg font-bold text-foreground">{garage.rating}</span>
+                  </div>
+                  <span className="text-[10px] md:text-xs text-muted-foreground">{garage.reviews} reviews</span>
                 </div>
-                <span className="text-[10px] text-muted-foreground">{garage.reviews} reviews</span>
               </div>
-            </div>
 
-            {/* Trustmarq Score + Badges */}
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-[10px] font-bold bg-primary/10 text-primary px-2.5 py-1 rounded-full border border-primary/20">
-                Score: {garage.score}/100
-              </span>
-              {garage.badges.map(badge => (
-                <span key={badge} className="text-[10px] font-medium text-muted-foreground px-2.5 py-1 rounded-full border border-border">
-                  {badge}
+              {/* Trustmarq Score + Badges */}
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-[10px] md:text-xs font-bold bg-primary/10 text-primary px-2.5 py-1 rounded-full border border-primary/20">
+                  Score: {garage.score}/100
                 </span>
-              ))}
-            </div>
-
-            {/* Key Insight */}
-            <div className="flex items-center gap-2 p-2.5 rounded-xl bg-success/8 border border-success/15">
-              <InsightIcon className="w-4 h-4 text-success shrink-0" />
-              <span className="text-xs text-success font-semibold">{garage.keyInsight}</span>
-            </div>
-
-            {/* Service Quality */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-1.5">
-                <Gauge className="w-3 h-3 text-muted-foreground" />
-                <span className="label-xs text-muted-foreground">Service Quality</span>
+                {garage.badges.map(badge => (
+                  <span key={badge} className="text-[10px] md:text-xs font-medium text-muted-foreground px-2.5 py-1 rounded-full border border-border">
+                    {badge}
+                  </span>
+                ))}
               </div>
-              <QualityBar label="Speed" value={garage.quality.speed} />
-              <QualityBar label="Cleanliness" value={garage.quality.cleanliness} />
-              <QualityBar label="Transparency" value={garage.quality.transparency} />
-            </div>
 
-            {/* Quote */}
-            <div className="p-2.5 rounded-xl bg-secondary/50 border-l-2 border-primary/40">
-              <div className="flex items-start gap-2">
-                <Eye className="w-3 h-3 text-primary shrink-0 mt-0.5" />
-                <p className="text-[11px] text-foreground/70 italic leading-relaxed">
-                  "{garage.quote}"
-                </p>
+              {/* Key Insight */}
+              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-success/8 border border-success/15">
+                <InsightIcon className="w-4 h-4 text-success shrink-0" />
+                <span className="text-xs text-success font-semibold">{garage.keyInsight}</span>
               </div>
-            </div>
 
-            {/* CTA */}
-            <Button className="w-full text-xs" size="sm">
-              Comparer · Voir les dispos
-            </Button>
-          </div>
-        );
-      })}
+              {/* Service Quality */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-1.5">
+                  <Gauge className="w-3 h-3 text-muted-foreground" />
+                  <span className="label-xs text-muted-foreground">Service Quality</span>
+                </div>
+                <QualityBar label="Speed" value={garage.quality.speed} />
+                <QualityBar label="Cleanliness" value={garage.quality.cleanliness} />
+                <QualityBar label="Transparency" value={garage.quality.transparency} />
+              </div>
+
+              {/* Quote */}
+              <div className="p-2.5 rounded-xl bg-secondary/50 border-l-2 border-primary/40">
+                <div className="flex items-start gap-2">
+                  <Eye className="w-3 h-3 text-primary shrink-0 mt-0.5" />
+                  <p className="text-[11px] md:text-xs text-foreground/70 italic leading-relaxed">
+                    "{garage.quote}"
+                  </p>
+                </div>
+              </div>
+
+              {/* CTA */}
+              <Button className="w-full text-xs md:text-sm" size="sm">
+                Comparer · Voir les dispos
+              </Button>
+            </div>
+          );
+        })}
+      </div>
     </section>
   );
 };

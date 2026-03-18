@@ -6,21 +6,37 @@ const StickyHeader = () => {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border">
-      <div className="max-w-lg mx-auto px-4">
+      <div className="max-w-6xl mx-auto px-4 md:px-6">
         {/* Top row */}
-        <div className="h-12 flex items-center justify-between">
-          <div className="flex items-center gap-1">
-            <span className="text-foreground font-bold text-[15px] tracking-tight">
+        <div className="h-14 md:h-16 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-1.5">
+            <span className="text-foreground font-bold text-[15px] md:text-lg tracking-tight">
               TRUSTMARQ
             </span>
-            <BadgeCheck className="w-4 h-4 text-primary" />
+            <BadgeCheck className="w-4 h-4 md:w-5 md:h-5 text-primary" />
           </div>
-          <button className="text-xs text-primary font-semibold hover:text-primary/80 transition-colors">
-            Sign in
-          </button>
+
+          {/* Desktop search — inline in header */}
+          <div className="hidden md:flex flex-1 max-w-md items-center gap-2.5 px-4 py-2.5 rounded-full bg-card border border-border focus-within:border-primary/50 transition-colors">
+            <Search className="w-4 h-4 text-muted-foreground shrink-0" />
+            <input
+              type="text"
+              placeholder="Search city or car brand..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="bg-transparent border-none outline-none text-foreground placeholder:text-muted-foreground w-full text-sm"
+            />
+          </div>
+
+          <div className="flex items-center gap-3">
+            <button className="text-xs md:text-sm text-primary font-semibold hover:text-primary/80 transition-colors">
+              Sign in
+            </button>
+          </div>
         </div>
-        {/* Search row */}
-        <div className="pb-3">
+
+        {/* Mobile search row */}
+        <div className="pb-3 md:hidden">
           <div className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-full bg-card border border-border focus-within:border-primary/50 transition-colors">
             <Search className="w-4 h-4 text-muted-foreground shrink-0" />
             <input
