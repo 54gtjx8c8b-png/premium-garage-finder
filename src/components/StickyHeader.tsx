@@ -34,6 +34,22 @@ const StickyHeader = () => {
             />
           </div>
 
+          {/* Desktop nav links */}
+          <nav className="hidden md:flex items-center gap-1">
+            {navLinks.map((link) => {
+              const Icon = link.icon;
+              return (
+                <button
+                  key={link.id}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary/60 transition-all duration-150"
+                >
+                  <Icon className="w-4 h-4" />
+                  {link.label}
+                </button>
+              );
+            })}
+          </nav>
+
           <div className="flex items-center gap-3">
             <button className="text-xs md:text-sm text-primary font-semibold hover:text-primary/80 transition-colors">
               Sign in
