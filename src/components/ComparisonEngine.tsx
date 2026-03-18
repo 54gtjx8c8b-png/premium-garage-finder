@@ -1,5 +1,6 @@
 import { Star, TrendingDown, BadgeCheck, Calendar } from 'lucide-react';
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 
 type ViewMode = 'side' | 'dealer' | 'specialist';
