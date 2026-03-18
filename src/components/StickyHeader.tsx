@@ -9,6 +9,7 @@ const navLinks = [
 
 const StickyHeader = () => {
   const [query, setQuery] = useState('');
+  const [activeNav, setActiveNav] = useState('home');
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border">
