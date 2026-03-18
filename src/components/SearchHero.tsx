@@ -1,15 +1,26 @@
 import { BadgeCheck, Shield, TrendingUp } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const SearchHero = () => {
   return (
     <section className="px-4 md:px-6 pt-28 md:pt-24 pb-4 md:pb-8 max-w-6xl mx-auto">
-      <div className="space-y-4 text-center md:text-left md:flex md:items-center md:justify-between md:gap-8">
+      <motion.div
+        className="space-y-4 text-center md:text-left md:flex md:items-center md:justify-between md:gap-8"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: [0.2, 0, 0, 1] }}
+      >
         <div className="md:flex-1">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-foreground text-balance leading-snug">
+          <motion.h1
+            className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-foreground text-balance leading-snug"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1, ease: [0.2, 0, 0, 1] }}
+          >
             Find the best garage.
             <br />
             <span className="text-primary">Verified by real reviews.</span>
-          </h1>
+          </motion.h1>
           <p className="text-muted-foreground text-sm md:text-base max-w-[420px] mx-auto md:mx-0 mt-3 leading-relaxed">
             Compare dealerships and independents side-by-side. Save money, get better service.
           </p>
@@ -30,7 +41,7 @@ const SearchHero = () => {
             </div>
           ))}
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 };

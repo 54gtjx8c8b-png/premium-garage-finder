@@ -1,4 +1,5 @@
 import { Star, TrendingDown, Gauge, Sparkles, BadgeCheck, Eye } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 
 const QualityBar = ({ label, value }: { label: string; value: number }) => (
@@ -59,10 +60,13 @@ const ReviewCards = () => {
         {garages.map((garage, index) => {
           const InsightIcon = garage.insightIcon;
           return (
-            <div
+            <motion.div
               key={garage.name}
-              className="surface-card p-4 md:p-5 space-y-3 animate-fade-in"
-              style={{ animationDelay: `${index * 100}ms` }}
+              className="surface-card p-4 md:p-5 space-y-3"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.4, delay: index * 0.1, ease: [0.2, 0, 0, 1] }}
             >
               {/* Header */}
               <div className="flex items-start justify-between">
@@ -125,7 +129,7 @@ const ReviewCards = () => {
               <Button className="w-full text-xs md:text-sm" size="sm">
                 Comparer · Voir les dispos
               </Button>
-            </div>
+            </motion.div>
           );
         })}
       </div>

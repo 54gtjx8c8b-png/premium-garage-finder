@@ -1,5 +1,6 @@
 import { Star, TrendingDown, BadgeCheck, Calendar } from 'lucide-react';
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 
 type ViewMode = 'side' | 'dealer' | 'specialist';
@@ -31,10 +32,23 @@ const ComparisonEngine = () => {
         </div>
       </div>
 
-      <div className={`grid gap-3 ${viewMode === 'side' ? 'grid-cols-2' : 'grid-cols-1'}`}>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={viewMode}
+          className={`grid gap-3 ${viewMode === 'side' ? 'grid-cols-2' : 'grid-cols-1'}`}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.3, ease: [0.2, 0, 0, 1] }}
+        >
         {/* Dealer Card */}
         {(viewMode === 'side' || viewMode === 'dealer') && (
-          <div className="surface-card p-4 transition-all duration-200 animate-fade-in">
+          <motion.div
+            className="surface-card p-4 transition-all duration-200"
+            initial={{ opacity: 0, scale: 0.97 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3, delay: 0.05 }}
+          >
             <div className="flex items-center justify-between mb-3">
               <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center">
                 <span className="text-muted-foreground font-bold text-[9px]">AUDI</span>
@@ -77,12 +91,17 @@ const ComparisonEngine = () => {
               <Calendar className="w-3 h-3" />
               View availability
             </Button>
-          </div>
+          </motion.div>
         )}
 
         {/* Independent Card */}
         {(viewMode === 'side' || viewMode === 'specialist') && (
-          <div className="surface-card p-4 relative transition-all duration-200 animate-fade-in border-primary/30">
+          <motion.div
+            className="surface-card p-4 relative transition-all duration-200 border-primary/30"
+            initial={{ opacity: 0, scale: 0.97 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3, delay: 0.1 }}
+          >
             <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-[10px] font-bold px-3 py-1 rounded-full flex items-center gap-1 whitespace-nowrap">
               <BadgeCheck className="w-3 h-3" />
               Verified
@@ -132,9 +151,10 @@ const ComparisonEngine = () => {
               <Calendar className="w-3 h-3" />
               Voir les dispos
             </Button>
-          </div>
+          </motion.div>
         )}
-      </div>
+        </motion.div>
+      </AnimatePresence>
     </section>
   );
 };
