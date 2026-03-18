@@ -41,7 +41,7 @@ const SearchHero = () => {
             </div>
           ))}
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 };

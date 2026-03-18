@@ -32,10 +32,23 @@ const ComparisonEngine = () => {
         </div>
       </div>
 
-      <div className={`grid gap-3 ${viewMode === 'side' ? 'grid-cols-2' : 'grid-cols-1'}`}>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={viewMode}
+          className={`grid gap-3 ${viewMode === 'side' ? 'grid-cols-2' : 'grid-cols-1'}`}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.3, ease: [0.2, 0, 0, 1] }}
+        >
         {/* Dealer Card */}
         {(viewMode === 'side' || viewMode === 'dealer') && (
-          <div className="surface-card p-4 transition-all duration-200 animate-fade-in">
+          <motion.div
+            className="surface-card p-4 transition-all duration-200"
+            initial={{ opacity: 0, scale: 0.97 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3, delay: 0.05 }}
+          >
             <div className="flex items-center justify-between mb-3">
               <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center">
                 <span className="text-muted-foreground font-bold text-[9px]">AUDI</span>
