@@ -4,22 +4,15 @@ import { Button } from '@/components/ui/button';
 
 type ViewMode = 'side' | 'dealer' | 'specialist';
 
-const ScoreBadge = ({ score, label }: { score: number; label: string }) => (
-  <div className="flex items-center gap-1">
-    <span className="font-mono-data text-lg font-bold text-foreground">{score}</span>
-    <span className="text-[10px] text-muted-foreground font-medium">/ 100</span>
-  </div>
-);
-
 const ComparisonEngine = () => {
   const [viewMode, setViewMode] = useState<ViewMode>('side');
 
   return (
-    <section className="px-4 py-5 max-w-lg mx-auto">
+    <section className="px-4 py-5 max-w-lg mx-auto lg:max-w-none lg:px-0">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h2 className="text-base font-bold tracking-tight text-foreground">Dealer vs Independent</h2>
-          <p className="text-muted-foreground text-xs mt-0.5">Based on verified Google reviews</p>
+          <h2 className="text-base md:text-lg font-bold tracking-tight text-foreground">Dealer vs Independent</h2>
+          <p className="text-muted-foreground text-xs md:text-sm mt-0.5">Based on verified Google reviews</p>
         </div>
         <div className="flex bg-card rounded-full p-0.5 border border-border">
           {(['side', 'dealer', 'specialist'] as ViewMode[]).map((mode) => (
@@ -90,7 +83,6 @@ const ComparisonEngine = () => {
         {/* Independent Card */}
         {(viewMode === 'side' || viewMode === 'specialist') && (
           <div className="surface-card p-4 relative transition-all duration-200 animate-fade-in border-primary/30">
-            {/* Verified badge */}
             <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-[10px] font-bold px-3 py-1 rounded-full flex items-center gap-1 whitespace-nowrap">
               <BadgeCheck className="w-3 h-3" />
               Verified

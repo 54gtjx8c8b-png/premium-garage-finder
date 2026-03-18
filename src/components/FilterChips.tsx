@@ -14,8 +14,8 @@ const FilterChips = () => {
   const [active, setActive] = useState('all');
 
   return (
-    <section className="px-4 py-3 max-w-lg mx-auto">
-      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide -mx-4 px-4">
+    <section className="px-4 md:px-6 py-3 max-w-6xl mx-auto">
+      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 md:flex-wrap">
         {filters.map((filter) => {
           const Icon = filter.icon;
           const isActive = active === filter.id;
