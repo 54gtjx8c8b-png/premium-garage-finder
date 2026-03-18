@@ -91,12 +91,17 @@ const ComparisonEngine = () => {
               <Calendar className="w-3 h-3" />
               View availability
             </Button>
-          </div>
+          </motion.div>
         )}
 
         {/* Independent Card */}
         {(viewMode === 'side' || viewMode === 'specialist') && (
-          <div className="surface-card p-4 relative transition-all duration-200 animate-fade-in border-primary/30">
+          <motion.div
+            className="surface-card p-4 relative transition-all duration-200 border-primary/30"
+            initial={{ opacity: 0, scale: 0.97 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3, delay: 0.1 }}
+          >
             <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-[10px] font-bold px-3 py-1 rounded-full flex items-center gap-1 whitespace-nowrap">
               <BadgeCheck className="w-3 h-3" />
               Verified
