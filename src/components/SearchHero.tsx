@@ -20,7 +20,7 @@ const SearchHero = () => {
             Find the best garage.
             <br />
             <span className="text-primary">Verified by real reviews.</span>
-          </h1>
+          </motion.h1>
           <p className="text-muted-foreground text-sm md:text-base max-w-[420px] mx-auto md:mx-0 mt-3 leading-relaxed">
             Compare dealerships and independents side-by-side. Save money, get better service.
           </p>
