@@ -1,5 +1,11 @@
-import { Search, BadgeCheck } from 'lucide-react';
+import { Search, BadgeCheck, Home, Trophy, Bookmark } from 'lucide-react';
 import { useState } from 'react';
+
+const navLinks = [
+  { id: 'home', label: 'Home', icon: Home },
+  { id: 'rankings', label: 'Top Rankings', icon: Trophy },
+  { id: 'garage', label: 'My Garage', icon: Bookmark },
+];
 
 const StickyHeader = () => {
   const [query, setQuery] = useState('');
