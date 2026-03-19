@@ -21,6 +21,7 @@ const QualityBar = ({ label, value }: { label: string; value: number }) => (
 const ReviewCards = () => {
   const garages = [
     {
+      slug: 'autoprecision-paris',
       name: 'AutoPrecision Paris 16',
       specialty: 'Porsche & VW Group',
       rating: 4.9,
