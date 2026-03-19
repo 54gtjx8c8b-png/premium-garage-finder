@@ -129,9 +129,11 @@ const ReviewCards = () => {
               </div>
 
               {/* CTA */}
-              <Button className="w-full text-xs md:text-sm" size="sm">
-                Comparer · Voir les dispos
-              </Button>
+              <Link to={`/garage/${garage.slug}`}>
+                <Button className="w-full text-xs md:text-sm" size="sm">
+                  Voir le garage
+                </Button>
+              </Link>
             </motion.div>
           );
         })}
