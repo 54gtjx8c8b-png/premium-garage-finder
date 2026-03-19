@@ -1,5 +1,6 @@
 import { Star, TrendingDown, Gauge, Sparkles, BadgeCheck, Eye } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 
 const QualityBar = ({ label, value }: { label: string; value: number }) => (
@@ -20,6 +21,7 @@ const QualityBar = ({ label, value }: { label: string; value: number }) => (
 const ReviewCards = () => {
   const garages = [
     {
+      slug: 'autoprecision-paris',
       name: 'AutoPrecision Paris 16',
       specialty: 'Porsche & VW Group',
       rating: 4.9,
@@ -33,6 +35,7 @@ const ReviewCards = () => {
       verified: true,
     },
     {
+      slug: 'electrodrive-bordeaux',
       name: 'ElectroDrive Bordeaux',
       specialty: 'Tesla & EV Specialist',
       rating: 4.7,
@@ -126,9 +129,11 @@ const ReviewCards = () => {
               </div>
 
               {/* CTA */}
-              <Button className="w-full text-xs md:text-sm" size="sm">
-                Comparer · Voir les dispos
-              </Button>
+              <Link to={`/garage/${garage.slug}`}>
+                <Button className="w-full text-xs md:text-sm" size="sm">
+                  Voir le garage
+                </Button>
+              </Link>
             </motion.div>
           );
         })}
