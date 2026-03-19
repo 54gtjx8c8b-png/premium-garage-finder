@@ -35,6 +35,7 @@ const ReviewCards = () => {
       verified: true,
     },
     {
+      slug: 'electrodrive-bordeaux',
       name: 'ElectroDrive Bordeaux',
       specialty: 'Tesla & EV Specialist',
       rating: 4.7,
