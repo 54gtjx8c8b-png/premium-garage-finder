@@ -1,7 +1,11 @@
-import { Star, TrendingDown, Gauge, Sparkles, BadgeCheck, Eye } from 'lucide-react';
+import { Star, Gauge, Eye, BadgeCheck, Phone, FileText, ShieldCheck, ArrowUpDown } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { GARAGES, calculateTrustmarqScore } from '@/data/garages';
+import QuoteModal from '@/components/QuoteModal';
 
 const QualityBar = ({ label, value }: { label: string; value: number }) => (
   <div className="space-y-1">
@@ -18,58 +22,50 @@ const QualityBar = ({ label, value }: { label: string; value: number }) => (
   </div>
 );
 
+type SortMode = 'score' | 'reviews';
+
 const ReviewCards = () => {
-  const garages = [
-    {
-      slug: 'autoprecision-paris',
-      name: 'AutoPrecision Paris 16',
-      specialty: 'Porsche & VW Group',
-      rating: 4.9,
-      score: 96,
-      reviews: 127,
-      keyInsight: 'Save 40% vs Dealership',
-      insightIcon: TrendingDown,
-      quality: { speed: 92, cleanliness: 95, transparency: 98 },
-      quote: "Ultra-precise diagnostics in 20 min. Outstanding follow-up.",
-      badges: ['Porsche Specialist', 'OEM Parts'],
-      verified: true,
-    },
-    {
-      slug: 'electrodrive-bordeaux',
-      name: 'ElectroDrive Bordeaux',
-      specialty: 'Tesla & EV Specialist',
-      rating: 4.7,
-      score: 93,
-      reviews: 84,
-      keyInsight: '#1 for Electric Vehicles',
-      insightIcon: Sparkles,
-      quality: { speed: 88, cleanliness: 94, transparency: 96 },
-      quote: "The only garage that truly understands Tesla. Perfect calibration.",
-      badges: ['EV Certified', '24h Emergency'],
-      verified: true,
-    },
-  ];
+  const [sortBy, setSortBy] = useState<SortMode>('score');
+  const [quoteGarage, setQuoteGarage] = useState<string | null>(null);
+
+  const garagesWithScore = GARAGES.map(g => ({
+    ...g,
+    score: calculateTrustmarqScore(g.rating, g.reviews),
+  }));
+
+  const sorted = [...garagesWithScore].sort((a, b) =>
+    sortBy === 'score' ? b.score - a.score : b.reviews - a.reviews
+  );
 
   return (
     <section className="px-4 py-5 max-w-lg mx-auto lg:max-w-none lg:px-0">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-base md:text-lg font-bold tracking-tight text-foreground">Top Rated</h2>
-        <button className="text-xs md:text-sm text-primary font-semibold hover:text-primary/80 transition-colors">
-          View all
-        </button>
+        <div className="flex items-center gap-2">
+          <ArrowUpDown className="w-3.5 h-3.5 text-muted-foreground" />
+          <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortMode)}>
+            <SelectTrigger className="h-8 w-[160px] text-xs bg-card border-border">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="score">Meilleur Score</SelectItem>
+              <SelectItem value="reviews">Plus d'avis</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       <div className="space-y-3 md:grid md:grid-cols-2 md:gap-4 md:space-y-0 lg:grid-cols-1 lg:gap-3">
-        {garages.map((garage, index) => {
+        {sorted.map((garage, index) => {
           const InsightIcon = garage.insightIcon;
           return (
             <motion.div
-              key={garage.name}
+              key={garage.slug}
               className="surface-card p-4 md:p-5 space-y-3"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.4, delay: index * 0.1, ease: [0.2, 0, 0, 1] }}
+              transition={{ duration: 0.4, delay: index * 0.08, ease: [0.2, 0, 0, 1] }}
             >
               {/* Header */}
               <div className="flex items-start justify-between">
@@ -78,21 +74,31 @@ const ReviewCards = () => {
                     <h3 className="text-sm md:text-base font-semibold text-foreground leading-tight">{garage.name}</h3>
                     {garage.verified && <BadgeCheck className="w-3.5 h-3.5 md:w-4 md:h-4 text-primary shrink-0" />}
                   </div>
-                  <p className="text-muted-foreground text-[11px] md:text-xs mt-0.5">{garage.specialty}</p>
+                  <p className="text-muted-foreground text-[11px] md:text-xs mt-0.5">
+                    {garage.specialty} · <span className="font-semibold">{garage.priceLevel}</span>
+                  </p>
                 </div>
                 <div className="flex flex-col items-end gap-0.5">
                   <div className="flex items-center gap-1">
                     <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                     <span className="font-mono-data text-base md:text-lg font-bold text-foreground">{garage.rating}</span>
                   </div>
-                  <span className="text-[10px] md:text-xs text-muted-foreground">{garage.reviews} reviews</span>
+                  <span className="text-[10px] md:text-xs text-muted-foreground">{garage.reviews} avis</span>
                 </div>
               </div>
 
               {/* Trustmarq Score + Badges */}
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-[10px] md:text-xs font-bold bg-primary/10 text-primary px-2.5 py-1 rounded-full border border-primary/20">
+                <span className="inline-flex items-center gap-1 text-[10px] md:text-xs font-bold bg-primary/10 text-primary px-2.5 py-1 rounded-full border border-primary/20">
+                  <ShieldCheck className="w-3 h-3" />
                   Score: {garage.score}/100
+                </span>
+                <span className={`text-[10px] md:text-xs font-medium px-2.5 py-1 rounded-full border ${
+                  garage.type === 'dealer' 
+                    ? 'text-[hsl(var(--warning))] border-[hsl(var(--warning))]/20 bg-[hsl(var(--warning))]/10'
+                    : 'text-muted-foreground border-border'
+                }`}>
+                  {garage.type === 'dealer' ? 'Concession' : 'Indépendant'}
                 </span>
                 {garage.badges.map(badge => (
                   <span key={badge} className="text-[10px] md:text-xs font-medium text-muted-foreground px-2.5 py-1 rounded-full border border-border">
@@ -102,20 +108,20 @@ const ReviewCards = () => {
               </div>
 
               {/* Key Insight */}
-              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-success/8 border border-success/15">
-                <InsightIcon className="w-4 h-4 text-success shrink-0" />
-                <span className="text-xs text-success font-semibold">{garage.keyInsight}</span>
+              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-[hsl(var(--success))]/8 border border-[hsl(var(--success))]/15">
+                <InsightIcon className="w-4 h-4 text-[hsl(var(--success))] shrink-0" />
+                <span className="text-xs text-[hsl(var(--success))] font-semibold">{garage.keyInsight}</span>
               </div>
 
               {/* Service Quality */}
               <div className="space-y-2">
                 <div className="flex items-center gap-1.5">
                   <Gauge className="w-3 h-3 text-muted-foreground" />
-                  <span className="label-xs text-muted-foreground">Service Quality</span>
+                  <span className="label-xs text-muted-foreground">Qualité de service</span>
                 </div>
-                <QualityBar label="Speed" value={garage.quality.speed} />
-                <QualityBar label="Cleanliness" value={garage.quality.cleanliness} />
-                <QualityBar label="Transparency" value={garage.quality.transparency} />
+                <QualityBar label="Rapidité" value={garage.quality.speed} />
+                <QualityBar label="Propreté" value={garage.quality.cleanliness} />
+                <QualityBar label="Transparence" value={garage.quality.transparency} />
               </div>
 
               {/* Quote */}
@@ -128,16 +134,36 @@ const ReviewCards = () => {
                 </div>
               </div>
 
-              {/* CTA */}
+              {/* CTAs */}
+              <div className="flex gap-2">
+                <a href={`tel:${garage.phone}`} className="flex-1">
+                  <Button variant="outline" size="sm" className="w-full text-xs">
+                    <Phone className="w-3.5 h-3.5" />
+                    Appeler
+                  </Button>
+                </a>
+                <Button size="sm" className="flex-1 text-xs" onClick={() => setQuoteGarage(garage.name)}>
+                  <FileText className="w-3.5 h-3.5" />
+                  Demander un devis
+                </Button>
+              </div>
+
+              {/* View detail */}
               <Link to={`/garage/${garage.slug}`}>
-                <Button className="w-full text-xs md:text-sm" size="sm">
-                  Voir le garage
+                <Button variant="ghost" size="sm" className="w-full text-xs text-muted-foreground hover:text-foreground">
+                  Voir la fiche complète →
                 </Button>
               </Link>
             </motion.div>
           );
         })}
       </div>
+
+      <QuoteModal
+        open={!!quoteGarage}
+        onClose={() => setQuoteGarage(null)}
+        garageName={quoteGarage || ''}
+      />
     </section>
   );
 };
