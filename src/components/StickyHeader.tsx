@@ -1,5 +1,7 @@
-import { Search, BadgeCheck, Home, Trophy, Bookmark } from 'lucide-react';
+import { Search, BadgeCheck, Home, Trophy, Bookmark, LogOut } from 'lucide-react';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 
 const navLinks = [
   { id: 'home', label: 'Home', icon: Home },
