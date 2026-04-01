@@ -60,9 +60,19 @@ const StickyHeader = () => {
           </nav>
 
           <div className="flex items-center gap-3">
-            <button className="text-xs md:text-sm text-primary font-semibold hover:text-primary/80 transition-colors">
-              Sign in
-            </button>
+            {user ? (
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-muted-foreground hidden md:inline">{user.email}</span>
+                <button onClick={signOut} className="text-xs md:text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span className="hidden md:inline">Déconnexion</span>
+                </button>
+              </div>
+            ) : (
+              <Link to="/auth" className="text-xs md:text-sm text-primary font-semibold hover:text-primary/80 transition-colors">
+                Se connecter
+              </Link>
+            )}
           </div>
         </div>
 
