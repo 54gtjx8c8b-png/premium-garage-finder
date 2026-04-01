@@ -2,15 +2,33 @@ import { Star, TrendingDown, BadgeCheck, Calendar, ShieldCheck } from 'lucide-re
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { GARAGES, calculateTrustmarqScore } from '@/data/garages';
+import { useGarages, calculateTrustmarqScore, Garage } from '@/hooks/useGarages';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type ViewMode = 'side' | 'dealer' | 'specialist';
 
 const ComparisonEngine = () => {
   const [viewMode, setViewMode] = useState<ViewMode>('side');
+  const { data: garages, isLoading } = useGarages();
 
-  const dealer = GARAGES.find(g => g.type === 'dealer')!;
-  const independent = GARAGES.filter(g => g.type === 'independent').sort((a, b) => b.rating - a.rating)[0];
+  if (isLoading) {
+    return (
+      <section className="px-4 py-5 max-w-lg mx-auto lg:max-w-none lg:px-0">
+        <Skeleton className="h-8 w-48 mb-4" />
+        <div className="grid grid-cols-2 gap-3">
+          <Skeleton className="h-64 rounded-2xl" />
+          <Skeleton className="h-64 rounded-2xl" />
+        </div>
+      </section>
+    );
+  }
+
+  if (!garages?.length) return null;
+
+  const dealer = garages.find(g => g.type === 'dealer')!;
+  const independent = garages.filter(g => g.type === 'independent').sort((a, b) => b.rating - a.rating)[0];
+
+  if (!dealer || !independent) return null;
 
   const dealerScore = calculateTrustmarqScore(dealer.rating, dealer.reviews);
   const indepScore = calculateTrustmarqScore(independent.rating, independent.reviews);
@@ -32,7 +50,7 @@ const ComparisonEngine = () => {
     </div>
   );
 
-  const renderCard = (garage: typeof dealer, score: number, isHighlighted: boolean) => (
+  const renderCard = (garage: Garage, score: number, isHighlighted: boolean) => (
     <motion.div
       className={`surface-card p-4 relative transition-all duration-200 ${isHighlighted ? 'border-primary/30' : ''}`}
       initial={{ opacity: 0, scale: 0.97 }}
