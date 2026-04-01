@@ -9,13 +9,37 @@ import GarageHours from '@/components/garage/GarageHours';
 import GarageMap from '@/components/garage/GarageMap';
 import GarageReviews from '@/components/garage/GarageReviews';
 import QuoteModal from '@/components/QuoteModal';
-import { GARAGES, calculateTrustmarqScore } from '@/data/garages';
+import { useGarage, calculateTrustmarqScore } from '@/hooks/useGarages';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const GarageDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [quoteOpen, setQuoteOpen] = useState(false);
-  
-  const garage = GARAGES.find(g => g.slug === id) || GARAGES[0];
+  const { data: garage, isLoading } = useGarage(id || '');
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background pt-14 px-4">
+        <Skeleton className="h-64 rounded-2xl mb-4" />
+        <Skeleton className="h-8 w-2/3 mb-2" />
+        <Skeleton className="h-4 w-1/2" />
+      </div>
+    );
+  }
+
+  if (!garage) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center space-y-3">
+          <p className="text-lg font-semibold text-foreground">Garage non trouvé</p>
+          <Link to="/">
+            <Button variant="outline">Retour à l'accueil</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   const score = calculateTrustmarqScore(garage.rating, garage.reviews);
 
   return (
@@ -58,7 +82,6 @@ const GarageDetail = () => {
 
             <p className="text-sm text-foreground/70 leading-relaxed">{garage.description}</p>
 
-            {/* Badges */}
             <div className="flex flex-wrap gap-2">
               <span className="inline-flex items-center gap-1 text-xs font-bold bg-primary/10 text-primary px-3 py-1 rounded-full border border-primary/20">
                 <ShieldCheck className="w-3.5 h-3.5" />
@@ -78,7 +101,6 @@ const GarageDetail = () => {
               ))}
             </div>
 
-            {/* Contact info */}
             <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-1.5">
                 <MapPin className="w-3.5 h-3.5" />
@@ -94,7 +116,6 @@ const GarageDetail = () => {
               </div>
             </div>
 
-            {/* CTA buttons */}
             <div className="flex gap-3 pt-1">
               <a href={`tel:${garage.phone}`} className="flex-1">
                 <Button variant="outline" className="w-full">
@@ -109,7 +130,6 @@ const GarageDetail = () => {
             </div>
           </motion.div>
 
-          {/* Content grid */}
           <div className="grid md:grid-cols-5 gap-5 pb-8">
             <div className="md:col-span-3 space-y-5">
               <GarageHours hours={garage.hours} />

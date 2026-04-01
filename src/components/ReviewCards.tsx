@@ -4,8 +4,9 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { GARAGES, calculateTrustmarqScore } from '@/data/garages';
+import { useGarages, calculateTrustmarqScore } from '@/hooks/useGarages';
 import QuoteModal from '@/components/QuoteModal';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const QualityBar = ({ label, value }: { label: string; value: number }) => (
   <div className="space-y-1">
@@ -27,8 +28,19 @@ type SortMode = 'score' | 'reviews';
 const ReviewCards = () => {
   const [sortBy, setSortBy] = useState<SortMode>('score');
   const [quoteGarage, setQuoteGarage] = useState<string | null>(null);
+  const { data: garages, isLoading } = useGarages();
 
-  const garagesWithScore = GARAGES.map(g => ({
+  if (isLoading) {
+    return (
+      <section className="px-4 py-5 max-w-lg mx-auto lg:max-w-none lg:px-0">
+        <div className="space-y-3">
+          {[1, 2, 3].map(i => <Skeleton key={i} className="h-64 rounded-2xl" />)}
+        </div>
+      </section>
+    );
+  }
+
+  const garagesWithScore = (garages || []).map(g => ({
     ...g,
     score: calculateTrustmarqScore(g.rating, g.reviews),
   }));
@@ -67,7 +79,6 @@ const ReviewCards = () => {
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.4, delay: index * 0.08, ease: [0.2, 0, 0, 1] }}
             >
-              {/* Header */}
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-1.5">
@@ -87,7 +98,6 @@ const ReviewCards = () => {
                 </div>
               </div>
 
-              {/* Trustmarq Score + Badges */}
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="inline-flex items-center gap-1 text-[10px] md:text-xs font-bold bg-primary/10 text-primary px-2.5 py-1 rounded-full border border-primary/20">
                   <ShieldCheck className="w-3 h-3" />
@@ -107,13 +117,11 @@ const ReviewCards = () => {
                 ))}
               </div>
 
-              {/* Key Insight */}
               <div className="flex items-center gap-2 p-2.5 rounded-xl bg-[hsl(var(--success))]/8 border border-[hsl(var(--success))]/15">
                 <InsightIcon className="w-4 h-4 text-[hsl(var(--success))] shrink-0" />
                 <span className="text-xs text-[hsl(var(--success))] font-semibold">{garage.keyInsight}</span>
               </div>
 
-              {/* Service Quality */}
               <div className="space-y-2">
                 <div className="flex items-center gap-1.5">
                   <Gauge className="w-3 h-3 text-muted-foreground" />
@@ -124,7 +132,6 @@ const ReviewCards = () => {
                 <QualityBar label="Transparence" value={garage.quality.transparency} />
               </div>
 
-              {/* Quote */}
               <div className="p-2.5 rounded-xl bg-secondary/50 border-l-2 border-primary/40">
                 <div className="flex items-start gap-2">
                   <Eye className="w-3 h-3 text-primary shrink-0 mt-0.5" />
@@ -134,7 +141,6 @@ const ReviewCards = () => {
                 </div>
               </div>
 
-              {/* CTAs */}
               <div className="flex gap-2">
                 <a href={`tel:${garage.phone}`} className="flex-1">
                   <Button variant="outline" size="sm" className="w-full text-xs">
@@ -148,7 +154,6 @@ const ReviewCards = () => {
                 </Button>
               </div>
 
-              {/* View detail */}
               <Link to={`/garage/${garage.slug}`}>
                 <Button variant="ghost" size="sm" className="w-full text-xs text-muted-foreground hover:text-foreground">
                   Voir la fiche complète →

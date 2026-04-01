@@ -1,5 +1,7 @@
-import { Search, BadgeCheck, Home, Trophy, Bookmark } from 'lucide-react';
+import { Search, BadgeCheck, Home, Trophy, Bookmark, LogOut } from 'lucide-react';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 
 const navLinks = [
   { id: 'home', label: 'Home', icon: Home },
@@ -10,6 +12,7 @@ const navLinks = [
 const StickyHeader = () => {
   const [query, setQuery] = useState('');
   const [activeNav, setActiveNav] = useState('home');
+  const { user, signOut } = useAuth();
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border">
@@ -57,9 +60,19 @@ const StickyHeader = () => {
           </nav>
 
           <div className="flex items-center gap-3">
-            <button className="text-xs md:text-sm text-primary font-semibold hover:text-primary/80 transition-colors">
-              Sign in
-            </button>
+            {user ? (
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-muted-foreground hidden md:inline">{user.email}</span>
+                <button onClick={signOut} className="text-xs md:text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span className="hidden md:inline">Déconnexion</span>
+                </button>
+              </div>
+            ) : (
+              <Link to="/auth" className="text-xs md:text-sm text-primary font-semibold hover:text-primary/80 transition-colors">
+                Se connecter
+              </Link>
+            )}
           </div>
         </div>
 
