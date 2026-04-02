@@ -9,10 +9,18 @@ const navLinks = [
   { id: 'garage', label: 'My Garage', icon: Bookmark },
 ];
 
-const StickyHeader = () => {
-  const [query, setQuery] = useState('');
+interface StickyHeaderProps {
+  searchQuery?: string;
+  onSearchChange?: (query: string) => void;
+}
+
+const StickyHeader = ({ searchQuery, onSearchChange }: StickyHeaderProps) => {
+  const [localQuery, setLocalQuery] = useState('');
   const [activeNav, setActiveNav] = useState('home');
   const { user, signOut } = useAuth();
+
+  const query = searchQuery ?? localQuery;
+  const setQuery = onSearchChange ?? setLocalQuery;
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border">

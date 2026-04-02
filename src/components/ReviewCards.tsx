@@ -25,7 +25,11 @@ const QualityBar = ({ label, value }: { label: string; value: number }) => (
 
 type SortMode = 'score' | 'reviews';
 
-const ReviewCards = () => {
+interface ReviewCardsProps {
+  searchQuery?: string;
+}
+
+const ReviewCards = ({ searchQuery = '' }: ReviewCardsProps) => {
   const [sortBy, setSortBy] = useState<SortMode>('score');
   const [quoteGarage, setQuoteGarage] = useState<string | null>(null);
   const { data: garages, isLoading } = useGarages();
@@ -45,14 +49,27 @@ const ReviewCards = () => {
     score: calculateTrustmarqScore(g.rating, g.reviews),
   }));
 
-  const sorted = [...garagesWithScore].sort((a, b) =>
+  const filtered = garagesWithScore.filter(g => {
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase();
+    return (
+      g.name.toLowerCase().includes(q) ||
+      g.brand.toLowerCase().includes(q) ||
+      g.address.toLowerCase().includes(q) ||
+      g.specialty.toLowerCase().includes(q)
+    );
+  });
+
+  const sorted = [...filtered].sort((a, b) =>
     sortBy === 'score' ? b.score - a.score : b.reviews - a.reviews
   );
 
   return (
     <section className="px-4 py-5 max-w-lg mx-auto lg:max-w-none lg:px-0">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-base md:text-lg font-bold tracking-tight text-foreground">Top Rated</h2>
+        <h2 className="text-base md:text-lg font-bold tracking-tight text-foreground">
+          Top Rated {searchQuery && <span className="text-muted-foreground font-normal text-sm">· "{searchQuery}"</span>}
+        </h2>
         <div className="flex items-center gap-2">
           <ArrowUpDown className="w-3.5 h-3.5 text-muted-foreground" />
           <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortMode)}>
