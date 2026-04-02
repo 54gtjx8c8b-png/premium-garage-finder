@@ -1,37 +1,81 @@
-import { Star, ThumbsUp } from 'lucide-react';
+import { Star, ThumbsUp, Send } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { useAuth } from '@/contexts/AuthContext';
+import { useGarageReviews, useCreateReview } from '@/hooks/useReviews';
+import { Link } from 'react-router-dom';
+import { toast } from 'sonner';
+import { formatDistanceToNow } from 'date-fns';
+import { fr } from 'date-fns/locale';
 
 interface GarageReviewsProps {
+  garageId: string;
   garageName: string;
   rating: number;
   reviewCount: number;
 }
 
-const SAMPLE_REVIEWS = [
-  {
-    author: 'Marc D.',
-    date: 'Il y a 2 semaines',
-    rating: 5,
-    text: "Diagnostic ultra-précis en 20 min. Suivi impeccable et tarifs justes. Je recommande à 100%.",
-    helpful: 12,
-  },
-  {
-    author: 'Sophie L.',
-    date: 'Il y a 1 mois',
-    rating: 5,
-    text: "Accueil professionnel, explications claires. Ma Porsche n'a jamais été aussi bien entretenue.",
-    helpful: 8,
-  },
-  {
-    author: 'Thomas R.',
-    date: 'Il y a 2 mois',
-    rating: 4,
-    text: "Très bon travail sur ma Golf GTI. Seul bémol : délai un peu long pour le rendez-vous.",
-    helpful: 5,
-  },
-];
+const StarRating = ({ value, onChange }: { value: number; onChange: (v: number) => void }) => {
+  const [hover, setHover] = useState(0);
+  return (
+    <div className="flex gap-1">
+      {[1, 2, 3, 4, 5].map(i => (
+        <button
+          key={i}
+          type="button"
+          onMouseEnter={() => setHover(i)}
+          onMouseLeave={() => setHover(0)}
+          onClick={() => onChange(i)}
+          className="transition-transform hover:scale-110"
+        >
+          <Star
+            className={`w-5 h-5 transition-colors ${
+              i <= (hover || value) ? 'fill-amber-400 text-amber-400' : 'text-border'
+            }`}
+          />
+        </button>
+      ))}
+    </div>
+  );
+};
 
-const GarageReviews = ({ garageName, rating, reviewCount }: GarageReviewsProps) => {
+const GarageReviews = ({ garageId, garageName, rating, reviewCount }: GarageReviewsProps) => {
+  const { user } = useAuth();
+  const { data: reviews, isLoading } = useGarageReviews(garageId);
+  const createReview = useCreateReview();
+  const [newRating, setNewRating] = useState(0);
+  const [newText, setNewText] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+    if (newRating === 0) {
+      toast.error('Veuillez sélectionner une note');
+      return;
+    }
+    if (!newText.trim() || newText.trim().length < 10) {
+      toast.error('Votre avis doit contenir au moins 10 caractères');
+      return;
+    }
+
+    try {
+      await createReview.mutateAsync({
+        garage_id: garageId,
+        user_id: user.id,
+        author_name: user.email?.split('@')[0] || 'Utilisateur',
+        rating: newRating,
+        text: newText.trim(),
+      });
+      setNewRating(0);
+      setNewText('');
+      toast.success('Avis publié avec succès !');
+    } catch {
+      toast.error("Erreur lors de la publication de l'avis");
+    }
+  };
+
   return (
     <motion.div
       className="surface-card p-4 space-y-4"
@@ -49,42 +93,79 @@ const GarageReviews = ({ garageName, rating, reviewCount }: GarageReviewsProps) 
         </div>
       </div>
 
+      {/* Review form */}
+      {user ? (
+        <form onSubmit={handleSubmit} className="p-3 rounded-xl bg-primary/5 border border-primary/15 space-y-3">
+          <p className="text-xs font-semibold text-foreground">Laisser un avis</p>
+          <StarRating value={newRating} onChange={setNewRating} />
+          <Textarea
+            placeholder="Partagez votre expérience avec ce garage..."
+            value={newText}
+            onChange={(e) => setNewText(e.target.value)}
+            className="min-h-[80px] text-sm bg-background/50 resize-none"
+            maxLength={1000}
+          />
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] text-muted-foreground">{newText.length}/1000</span>
+            <Button type="submit" size="sm" disabled={createReview.isPending} className="text-xs">
+              <Send className="w-3.5 h-3.5" />
+              {createReview.isPending ? 'Publication...' : 'Publier'}
+            </Button>
+          </div>
+        </form>
+      ) : (
+        <div className="p-3 rounded-xl bg-secondary/40 border border-border text-center">
+          <p className="text-xs text-muted-foreground">
+            <Link to="/auth" className="text-primary font-semibold hover:underline">Connectez-vous</Link> pour laisser un avis
+          </p>
+        </div>
+      )}
+
+      {/* Reviews list */}
       <div className="space-y-3">
-        {SAMPLE_REVIEWS.map((review, index) => (
-          <motion.div
-            key={review.author}
-            className="p-3 rounded-xl bg-secondary/40 border border-border space-y-2"
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.3, delay: index * 0.08 }}
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-full bg-primary/15 flex items-center justify-center">
-                  <span className="text-[10px] font-bold text-primary">{review.author.charAt(0)}</span>
+        {isLoading ? (
+          <p className="text-xs text-muted-foreground text-center py-4">Chargement des avis...</p>
+        ) : reviews && reviews.length > 0 ? (
+          reviews.map((review, index) => (
+            <motion.div
+              key={review.id}
+              className="p-3 rounded-xl bg-secondary/40 border border-border space-y-2"
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.3, delay: index * 0.08 }}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-full bg-primary/15 flex items-center justify-center">
+                    <span className="text-[10px] font-bold text-primary">{review.author_name.charAt(0).toUpperCase()}</span>
+                  </div>
+                  <div>
+                    <span className="text-xs font-semibold text-foreground">{review.author_name}</span>
+                    <p className="text-[10px] text-muted-foreground">
+                      {formatDistanceToNow(new Date(review.created_at), { addSuffix: true, locale: fr })}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <span className="text-xs font-semibold text-foreground">{review.author}</span>
-                  <p className="text-[10px] text-muted-foreground">{review.date}</p>
+                <div className="flex gap-0.5">
+                  {[1, 2, 3, 4, 5].map(i => (
+                    <Star
+                      key={i}
+                      className={`w-3 h-3 ${i <= review.rating ? 'fill-amber-400 text-amber-400' : 'text-border'}`}
+                    />
+                  ))}
                 </div>
               </div>
-              <div className="flex gap-0.5">
-                {[1, 2, 3, 4, 5].map(i => (
-                  <Star
-                    key={i}
-                    className={`w-3 h-3 ${i <= review.rating ? 'fill-amber-400 text-amber-400' : 'text-border'}`}
-                  />
-                ))}
-              </div>
-            </div>
-            <p className="text-xs text-foreground/70 leading-relaxed">{review.text}</p>
-            <button className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground transition-colors">
-              <ThumbsUp className="w-3 h-3" />
-              Utile ({review.helpful})
-            </button>
-          </motion.div>
-        ))}
+              <p className="text-xs text-foreground/70 leading-relaxed">{review.text}</p>
+              <button className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground transition-colors">
+                <ThumbsUp className="w-3 h-3" />
+                Utile ({review.helpful_count})
+              </button>
+            </motion.div>
+          ))
+        ) : (
+          <p className="text-xs text-muted-foreground text-center py-4">Aucun avis pour le moment. Soyez le premier !</p>
+        )}
       </div>
     </motion.div>
   );
