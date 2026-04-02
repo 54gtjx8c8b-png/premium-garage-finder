@@ -67,7 +67,9 @@ const ReviewCards = ({ searchQuery = '' }: ReviewCardsProps) => {
   return (
     <section className="px-4 py-5 max-w-lg mx-auto lg:max-w-none lg:px-0">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-base md:text-lg font-bold tracking-tight text-foreground">Top Rated</h2>
+        <h2 className="text-base md:text-lg font-bold tracking-tight text-foreground">
+          Top Rated {searchQuery && <span className="text-muted-foreground font-normal text-sm">· "{searchQuery}"</span>}
+        </h2>
         <div className="flex items-center gap-2">
           <ArrowUpDown className="w-3.5 h-3.5 text-muted-foreground" />
           <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortMode)}>
