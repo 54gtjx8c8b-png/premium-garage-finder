@@ -49,7 +49,18 @@ const ReviewCards = ({ searchQuery = '' }: ReviewCardsProps) => {
     score: calculateTrustmarqScore(g.rating, g.reviews),
   }));
 
-  const sorted = [...garagesWithScore].sort((a, b) =>
+  const filtered = garagesWithScore.filter(g => {
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase();
+    return (
+      g.name.toLowerCase().includes(q) ||
+      g.brand.toLowerCase().includes(q) ||
+      g.address.toLowerCase().includes(q) ||
+      g.specialty.toLowerCase().includes(q)
+    );
+  });
+
+  const sorted = [...filtered].sort((a, b) =>
     sortBy === 'score' ? b.score - a.score : b.reviews - a.reviews
   );
 

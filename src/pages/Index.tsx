@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import StickyHeader from '@/components/StickyHeader';
 import SearchHero from '@/components/SearchHero';
 import FilterChips from '@/components/FilterChips';
@@ -6,18 +7,20 @@ import ReviewCards from '@/components/ReviewCards';
 import BottomNav from '@/components/BottomNav';
 
 const Index = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+
   return (
     <div className="min-h-screen bg-background relative overflow-x-hidden">
-      <StickyHeader />
+      <StickyHeader searchQuery={searchQuery} onSearchChange={setSearchQuery} />
       <main className="pb-20 md:pb-8 md:pt-4">
-        <SearchHero />
+        <SearchHero searchQuery={searchQuery} onSearchChange={setSearchQuery} />
         <FilterChips />
         <div className="max-w-6xl mx-auto lg:grid lg:grid-cols-5 lg:gap-6 lg:px-6 xl:px-8">
           <div className="lg:col-span-2">
             <ComparisonEngine />
           </div>
           <div className="lg:col-span-3">
-            <ReviewCards />
+            <ReviewCards searchQuery={searchQuery} />
           </div>
         </div>
       </main>
