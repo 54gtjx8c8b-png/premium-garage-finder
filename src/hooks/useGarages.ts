@@ -14,6 +14,7 @@ const ICON_MAP: Record<string, typeof ShieldCheck> = {
 };
 
 export interface Garage {
+  id: string;
   slug: string;
   name: string;
   type: 'dealer' | 'independent';
