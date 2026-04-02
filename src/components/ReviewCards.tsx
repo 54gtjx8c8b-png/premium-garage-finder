@@ -25,7 +25,11 @@ const QualityBar = ({ label, value }: { label: string; value: number }) => (
 
 type SortMode = 'score' | 'reviews';
 
-const ReviewCards = () => {
+interface ReviewCardsProps {
+  searchQuery?: string;
+}
+
+const ReviewCards = ({ searchQuery = '' }: ReviewCardsProps) => {
   const [sortBy, setSortBy] = useState<SortMode>('score');
   const [quoteGarage, setQuoteGarage] = useState<string | null>(null);
   const { data: garages, isLoading } = useGarages();
