@@ -28,9 +28,10 @@ type SortMode = 'score' | 'reviews';
 
 interface ReviewCardsProps {
   searchQuery?: string;
+  activeFilter?: string;
 }
 
-const ReviewCards = ({ searchQuery = '' }: ReviewCardsProps) => {
+const ReviewCards = ({ searchQuery = '', activeFilter = 'all' }: ReviewCardsProps) => {
   const [sortBy, setSortBy] = useState<SortMode>('score');
   const [quoteGarage, setQuoteGarage] = useState<string | null>(null);
   const { data: garages, isLoading } = useGarages();
