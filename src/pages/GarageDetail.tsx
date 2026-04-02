@@ -134,7 +134,7 @@ const GarageDetail = () => {
             <div className="md:col-span-3 space-y-5">
               <GarageHours hours={garage.hours} />
               <GarageMap address={garage.address} coords={garage.coords} />
-              <GarageReviews garageName={garage.name} rating={garage.rating} reviewCount={garage.reviews} />
+              <GarageReviews garageId={garage.id} garageName={garage.name} rating={garage.rating} reviewCount={garage.reviews} />
             </div>
             <div className="md:col-span-2">
               <BookingForm garageName={garage.name} />

@@ -14,6 +14,7 @@ const ICON_MAP: Record<string, typeof ShieldCheck> = {
 };
 
 export interface Garage {
+  id: string;
   slug: string;
   name: string;
   type: 'dealer' | 'independent';
@@ -41,6 +42,7 @@ function mapDbToGarage(db: DbGarage): Garage {
   const quality = db.quality_scores as { speed: number; cleanliness: number; transparency: number };
   const coords = db.coords as { lat: number; lng: number };
   return {
+    id: db.id,
     slug: db.slug,
     name: db.name,
     type: db.type as 'dealer' | 'independent',
