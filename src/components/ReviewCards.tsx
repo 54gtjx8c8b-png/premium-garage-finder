@@ -1,4 +1,5 @@
 import { Star, Gauge, Eye, BadgeCheck, Phone, FileText, ShieldCheck, ArrowUpDown } from 'lucide-react';
+import { FILTER_OPTIONS } from '@/components/FilterChips';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
