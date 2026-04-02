@@ -1,4 +1,5 @@
 import { Star, Gauge, Eye, BadgeCheck, Phone, FileText, ShieldCheck, ArrowUpDown } from 'lucide-react';
+import { FILTER_OPTIONS } from '@/components/FilterChips';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
@@ -27,9 +28,10 @@ type SortMode = 'score' | 'reviews';
 
 interface ReviewCardsProps {
   searchQuery?: string;
+  activeFilter?: string;
 }
 
-const ReviewCards = ({ searchQuery = '' }: ReviewCardsProps) => {
+const ReviewCards = ({ searchQuery = '', activeFilter = 'all' }: ReviewCardsProps) => {
   const [sortBy, setSortBy] = useState<SortMode>('score');
   const [quoteGarage, setQuoteGarage] = useState<string | null>(null);
   const { data: garages, isLoading } = useGarages();
@@ -50,14 +52,24 @@ const ReviewCards = ({ searchQuery = '' }: ReviewCardsProps) => {
   }));
 
   const filtered = garagesWithScore.filter(g => {
-    if (!searchQuery.trim()) return true;
-    const q = searchQuery.toLowerCase();
-    return (
-      g.name.toLowerCase().includes(q) ||
-      g.brand.toLowerCase().includes(q) ||
-      g.address.toLowerCase().includes(q) ||
-      g.specialty.toLowerCase().includes(q)
-    );
+    // Text search
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      const matchesSearch = g.name.toLowerCase().includes(q) ||
+        g.brand.toLowerCase().includes(q) ||
+        g.address.toLowerCase().includes(q) ||
+        g.specialty.toLowerCase().includes(q);
+      if (!matchesSearch) return false;
+    }
+    // Category filter
+    if (activeFilter !== 'all') {
+      const filterOption = FILTER_OPTIONS.find(f => f.id === activeFilter);
+      if (filterOption) {
+        const haystack = `${g.specialty} ${g.name} ${g.badges.join(' ')} ${g.type} ${g.keyInsight}`.toLowerCase();
+        return filterOption.keywords.some(kw => haystack.includes(kw));
+      }
+    }
+    return true;
   });
 
   const sorted = [...filtered].sort((a, b) =>
