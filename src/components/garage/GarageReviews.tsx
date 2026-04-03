@@ -160,8 +160,22 @@ const GarageReviews = ({ garageId, garageName, rating, reviewCount }: GarageRevi
                 </div>
               </div>
               <p className="text-xs text-foreground/70 leading-relaxed">{review.text}</p>
-              <button className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground transition-colors">
-                <ThumbsUp className="w-3 h-3" />
+              <button
+                className={`flex items-center gap-1 text-[10px] transition-colors ${
+                  votedSet.has(review.id)
+                    ? 'text-primary font-semibold'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+                onClick={() => {
+                  if (!user) {
+                    toast.info('Connectez-vous pour voter');
+                    return;
+                  }
+                  toggleHelpful.mutate({ reviewId: review.id, hasVoted: votedSet.has(review.id) });
+                }}
+                disabled={toggleHelpful.isPending}
+              >
+                <ThumbsUp className={`w-3 h-3 ${votedSet.has(review.id) ? 'fill-primary' : ''}`} />
                 Utile ({review.helpful_count})
               </button>
             </motion.div>
