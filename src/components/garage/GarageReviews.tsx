@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/contexts/AuthContext';
-import { useGarageReviews, useCreateReview } from '@/hooks/useReviews';
+import { useGarageReviews, useCreateReview, useHelpfulVotes, useToggleHelpful } from '@/hooks/useReviews';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
