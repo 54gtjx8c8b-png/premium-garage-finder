@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useGarages, calculateTrustmarqScore } from '@/hooks/useGarages';
 import QuoteModal from '@/components/QuoteModal';
+import FavoriteButton from '@/components/FavoriteButton';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const QualityBar = ({ label, value }: { label: string; value: number }) => (
@@ -113,6 +114,7 @@ const ReviewCards = ({ searchQuery = '', activeFilter = 'all' }: ReviewCardsProp
                   <div className="flex items-center gap-1.5">
                     <h3 className="text-sm md:text-base font-semibold text-foreground leading-tight">{garage.name}</h3>
                     {garage.verified && <BadgeCheck className="w-3.5 h-3.5 md:w-4 md:h-4 text-primary shrink-0" />}
+                    <FavoriteButton garageId={garage.id} size="sm" className="ml-auto -mr-2 -mt-1" />
                   </div>
                   <p className="text-muted-foreground text-[11px] md:text-xs mt-0.5">
                     {garage.specialty} · <span className="font-semibold">{garage.priceLevel}</span>
