@@ -10,6 +10,7 @@ import GarageMap from '@/components/garage/GarageMap';
 import GarageReviews from '@/components/garage/GarageReviews';
 import QuoteModal from '@/components/QuoteModal';
 import { useGarage, calculateTrustmarqScore } from '@/hooks/useGarages';
+import FavoriteButton from '@/components/FavoriteButton';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const GarageDetail = () => {
