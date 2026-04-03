@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useGarages, calculateTrustmarqScore } from '@/hooks/useGarages';
 import QuoteModal from '@/components/QuoteModal';
+import FavoriteButton from '@/components/FavoriteButton';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const QualityBar = ({ label, value }: { label: string; value: number }) => (
