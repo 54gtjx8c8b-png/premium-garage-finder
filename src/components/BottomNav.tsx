@@ -1,9 +1,10 @@
-import { Home, Trophy, Heart } from 'lucide-react';
+import { Home, Heart, User } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const tabs = [
   { id: '/', label: 'Accueil', icon: Home },
   { id: '/favorites', label: 'Favoris', icon: Heart },
+  { id: '/profile', label: 'Profil', icon: User },
 ];
 
 const BottomNav = () => {

@@ -1,4 +1,4 @@
-import { Search, BadgeCheck, Home, Trophy, Bookmark, LogOut } from 'lucide-react';
+import { Search, BadgeCheck, Home, Trophy, Bookmark, LogOut, User } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -70,7 +70,10 @@ const StickyHeader = ({ searchQuery, onSearchChange }: StickyHeaderProps) => {
           <div className="flex items-center gap-3">
             {user ? (
               <div className="flex items-center gap-2">
-                <span className="text-xs text-muted-foreground hidden md:inline">{user.email}</span>
+                <Link to="/profile" className="flex items-center gap-1.5 text-xs md:text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  <User className="w-4 h-4" />
+                  <span className="hidden md:inline">{user.email?.split('@')[0]}</span>
+                </Link>
                 <button onClick={signOut} className="text-xs md:text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
                   <LogOut className="w-3.5 h-3.5" />
                   <span className="hidden md:inline">Déconnexion</span>
