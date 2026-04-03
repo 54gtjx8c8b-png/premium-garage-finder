@@ -1,4 +1,4 @@
-import { Search, BadgeCheck, Home, Trophy, Bookmark, LogOut } from 'lucide-react';
+import { Search, BadgeCheck, Home, Trophy, Bookmark, LogOut, User } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
