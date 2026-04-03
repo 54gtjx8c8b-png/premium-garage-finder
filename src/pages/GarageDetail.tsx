@@ -69,6 +69,7 @@ const GarageDetail = () => {
                 <div className="flex items-center gap-1.5">
                   <h1 className="text-xl md:text-2xl font-bold text-foreground">{garage.name}</h1>
                   {garage.verified && <BadgeCheck className="w-5 h-5 text-primary shrink-0" />}
+                  <FavoriteButton garageId={garage.id} />
                 </div>
                 <p className="text-muted-foreground text-sm mt-0.5">{garage.specialty} · {garage.priceLevel}</p>
               </div>
