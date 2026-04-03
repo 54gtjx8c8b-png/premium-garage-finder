@@ -45,6 +45,9 @@ const GarageReviews = ({ garageId, garageName, rating, reviewCount }: GarageRevi
   const { user } = useAuth();
   const { data: reviews, isLoading } = useGarageReviews(garageId);
   const createReview = useCreateReview();
+  const reviewIds = (reviews || []).map(r => r.id);
+  const { data: votedSet = new Set<string>() } = useHelpfulVotes(reviewIds);
+  const toggleHelpful = useToggleHelpful();
   const [newRating, setNewRating] = useState(0);
   const [newText, setNewText] = useState('');
 
