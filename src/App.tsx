@@ -8,6 +8,7 @@ import Index from "./pages/Index.tsx";
 import GarageDetail from "./pages/GarageDetail.tsx";
 import Auth from "./pages/Auth.tsx";
 import Favorites from "./pages/Favorites.tsx";
+import Profile from "./pages/Profile.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
