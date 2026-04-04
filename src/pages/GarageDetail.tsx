@@ -145,7 +145,7 @@ const GarageDetail = () => {
         </div>
       </main>
 
-      <QuoteModal open={quoteOpen} onClose={() => setQuoteOpen(false)} garageName={garage.name} />
+      <QuoteModal open={quoteOpen} onClose={() => setQuoteOpen(false)} garageName={garage.name} garageId={garage.id} />
     </div>
   );
 };
