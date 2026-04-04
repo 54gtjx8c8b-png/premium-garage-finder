@@ -1,6 +1,6 @@
 import { Link, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Star, BadgeCheck, Heart, MessageSquare, User, LogOut } from 'lucide-react';
+import { ArrowLeft, Star, BadgeCheck, Heart, MessageSquare, User, LogOut, Car, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/contexts/AuthContext';
