@@ -36,6 +36,7 @@ export interface Garage {
   images: string[];
   hours: { day: string; open: string; close: string }[];
   coords: { lat: number; lng: number };
+  vehicleTypes: string[];
 }
 
 function mapDbToGarage(db: DbGarage): Garage {
