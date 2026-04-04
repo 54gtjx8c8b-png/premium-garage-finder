@@ -9,6 +9,8 @@ import GarageDetail from "./pages/GarageDetail.tsx";
 import Auth from "./pages/Auth.tsx";
 import Favorites from "./pages/Favorites.tsx";
 import Profile from "./pages/Profile.tsx";
+import Vehicles from "./pages/Vehicles.tsx";
+import Dashboard from "./pages/Dashboard.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
