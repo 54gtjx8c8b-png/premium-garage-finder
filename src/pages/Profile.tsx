@@ -100,7 +100,8 @@ const Profile = () => {
               <span className="flex items-center gap-1">
                 <Heart className="w-3 h-3" />
                 {favoriteIds.length} favoris
-              </span>
+            </span>
+            </div>
           </div>
           <div className="flex gap-2 mt-2">
             <Link to="/vehicles">
