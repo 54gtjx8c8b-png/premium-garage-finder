@@ -203,7 +203,8 @@ const ReviewCards = ({ searchQuery = '', activeFilter = 'all' }: ReviewCardsProp
       <QuoteModal
         open={!!quoteGarage}
         onClose={() => setQuoteGarage(null)}
-        garageName={quoteGarage || ''}
+        garageName={quoteGarage?.name || ''}
+        garageId={quoteGarage?.id}
       />
     </section>
   );
