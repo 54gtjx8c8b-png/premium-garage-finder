@@ -184,7 +184,7 @@ const ReviewCards = ({ searchQuery = '', activeFilter = 'all' }: ReviewCardsProp
                     Appeler
                   </Button>
                 </a>
-                <Button size="sm" className="flex-1 text-xs" onClick={() => setQuoteGarage(garage.name)}>
+                <Button size="sm" className="flex-1 text-xs" onClick={() => setQuoteGarage({ name: garage.name, id: garage.id })}>
                   <FileText className="w-3.5 h-3.5" />
                   Demander un devis
                 </Button>
