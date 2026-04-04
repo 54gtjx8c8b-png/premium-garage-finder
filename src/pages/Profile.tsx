@@ -18,6 +18,7 @@ const Profile = () => {
   const { user, signOut, loading } = useAuth();
   const { data: favoriteIds = [], isLoading: loadingFavs } = useFavorites();
   const { data: garages = [], isLoading: loadingGarages } = useGarages();
+  const { data: ownerships = [] } = useGarageOwnership();
 
   const { data: profile } = useQuery({
     queryKey: ['profile', user?.id],
