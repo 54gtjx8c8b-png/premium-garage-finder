@@ -34,7 +34,7 @@ interface ReviewCardsProps {
 
 const ReviewCards = ({ searchQuery = '', activeFilter = 'all' }: ReviewCardsProps) => {
   const [sortBy, setSortBy] = useState<SortMode>('score');
-  const [quoteGarage, setQuoteGarage] = useState<string | null>(null);
+  const [quoteGarage, setQuoteGarage] = useState<{ name: string; id: string } | null>(null);
   const { data: garages, isLoading } = useGarages();
 
   if (isLoading) {
