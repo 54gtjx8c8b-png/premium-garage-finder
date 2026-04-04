@@ -9,6 +9,8 @@ import GarageDetail from "./pages/GarageDetail.tsx";
 import Auth from "./pages/Auth.tsx";
 import Favorites from "./pages/Favorites.tsx";
 import Profile from "./pages/Profile.tsx";
+import Vehicles from "./pages/Vehicles.tsx";
+import Dashboard from "./pages/Dashboard.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -25,6 +27,8 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/favorites" element={<Favorites />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/vehicles" element={<Vehicles />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/garage/:id" element={<GarageDetail />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

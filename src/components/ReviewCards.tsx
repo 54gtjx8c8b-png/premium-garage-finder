@@ -34,7 +34,7 @@ interface ReviewCardsProps {
 
 const ReviewCards = ({ searchQuery = '', activeFilter = 'all' }: ReviewCardsProps) => {
   const [sortBy, setSortBy] = useState<SortMode>('score');
-  const [quoteGarage, setQuoteGarage] = useState<string | null>(null);
+  const [quoteGarage, setQuoteGarage] = useState<{ name: string; id: string } | null>(null);
   const { data: garages, isLoading } = useGarages();
 
   if (isLoading) {
@@ -62,8 +62,13 @@ const ReviewCards = ({ searchQuery = '', activeFilter = 'all' }: ReviewCardsProp
         g.specialty.toLowerCase().includes(q);
       if (!matchesSearch) return false;
     }
-    // Category filter
-    if (activeFilter !== 'all') {
+    // Vehicle type filter
+    const vehicleFilters = ['voiture', 'moto', 'trottinette', 'camion', 'velo'];
+    if (vehicleFilters.includes(activeFilter)) {
+      const types = (g as any).vehicleTypes as string[] | undefined;
+      if (!types || !types.includes(activeFilter)) return false;
+    } else if (activeFilter !== 'all') {
+      // Category filter (specialty)
       const filterOption = FILTER_OPTIONS.find(f => f.id === activeFilter);
       if (filterOption) {
         const haystack = `${g.specialty} ${g.name} ${g.badges.join(' ')} ${g.type} ${g.keyInsight}`.toLowerCase();
@@ -179,7 +184,7 @@ const ReviewCards = ({ searchQuery = '', activeFilter = 'all' }: ReviewCardsProp
                     Appeler
                   </Button>
                 </a>
-                <Button size="sm" className="flex-1 text-xs" onClick={() => setQuoteGarage(garage.name)}>
+                <Button size="sm" className="flex-1 text-xs" onClick={() => setQuoteGarage({ name: garage.name, id: garage.id })}>
                   <FileText className="w-3.5 h-3.5" />
                   Demander un devis
                 </Button>
@@ -198,7 +203,8 @@ const ReviewCards = ({ searchQuery = '', activeFilter = 'all' }: ReviewCardsProp
       <QuoteModal
         open={!!quoteGarage}
         onClose={() => setQuoteGarage(null)}
-        garageName={quoteGarage || ''}
+        garageName={quoteGarage?.name || ''}
+        garageId={quoteGarage?.id}
       />
     </section>
   );

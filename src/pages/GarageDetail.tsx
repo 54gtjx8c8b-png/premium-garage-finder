@@ -1,6 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Star, BadgeCheck, MapPin, Phone, Globe, ShieldCheck, FileText } from 'lucide-react';
+import { ArrowLeft, Star, BadgeCheck, MapPin, Phone, Globe, ShieldCheck, FileText, Car, Bike, Truck, Zap, BatteryCharging } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import BookingForm from '@/components/garage/BookingForm';
@@ -96,6 +96,15 @@ const GarageDetail = () => {
               }`}>
                 {garage.type === 'dealer' ? 'Concession' : 'Indépendant'}
               </span>
+              {garage.vehicleTypes.map(vt => {
+                const icons: Record<string, typeof Car> = { voiture: Car, moto: Bike, camion: Truck, trottinette: Zap, velo: BatteryCharging };
+                const VIcon = icons[vt] || Car;
+                return (
+                  <span key={vt} className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground px-3 py-1 rounded-full border border-border capitalize">
+                    <VIcon className="w-3 h-3" /> {vt}
+                  </span>
+                );
+              })}
               {garage.badges.map(badge => (
                 <span key={badge} className="text-xs font-medium text-muted-foreground px-3 py-1 rounded-full border border-border">
                   {badge}
@@ -145,7 +154,7 @@ const GarageDetail = () => {
         </div>
       </main>
 
-      <QuoteModal open={quoteOpen} onClose={() => setQuoteOpen(false)} garageName={garage.name} />
+      <QuoteModal open={quoteOpen} onClose={() => setQuoteOpen(false)} garageName={garage.name} garageId={garage.id} />
     </div>
   );
 };

@@ -1,10 +1,11 @@
 import { Link, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Star, BadgeCheck, Heart, MessageSquare, User, LogOut } from 'lucide-react';
+import { ArrowLeft, Star, BadgeCheck, Heart, MessageSquare, User, LogOut, Car, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/contexts/AuthContext';
 import { useFavorites } from '@/hooks/useFavorites';
+import { useGarageOwnership } from '@/hooks/useDashboard';
 import { useGarages } from '@/hooks/useGarages';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -17,6 +18,7 @@ const Profile = () => {
   const { user, signOut, loading } = useAuth();
   const { data: favoriteIds = [], isLoading: loadingFavs } = useFavorites();
   const { data: garages = [], isLoading: loadingGarages } = useGarages();
+  const { data: ownerships = [] } = useGarageOwnership();
 
   const { data: profile } = useQuery({
     queryKey: ['profile', user?.id],
@@ -98,8 +100,18 @@ const Profile = () => {
               <span className="flex items-center gap-1">
                 <Heart className="w-3 h-3" />
                 {favoriteIds.length} favoris
-              </span>
+            </span>
             </div>
+          </div>
+          <div className="flex gap-2 mt-2">
+            <Link to="/vehicles">
+              <Button variant="outline" size="sm" className="text-xs"><Car className="w-3.5 h-3.5 mr-1" /> Mes véhicules</Button>
+            </Link>
+            {ownerships.length > 0 && (
+              <Link to="/dashboard">
+                <Button variant="outline" size="sm" className="text-xs"><BarChart3 className="w-3.5 h-3.5 mr-1" /> Dashboard Pro</Button>
+              </Link>
+            )}
           </div>
         </motion.div>
 

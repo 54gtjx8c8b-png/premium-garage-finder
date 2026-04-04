@@ -43,6 +43,35 @@ export type Database = {
           },
         ]
       }
+      garage_owners: {
+        Row: {
+          created_at: string
+          garage_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          garage_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          garage_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "garage_owners_garage_id_fkey"
+            columns: ["garage_id"]
+            isOneToOne: false
+            referencedRelation: "garages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       garages: {
         Row: {
           address: string
@@ -67,6 +96,7 @@ export type Database = {
           specialty: string | null
           type: string
           updated_at: string
+          vehicle_types: Json
           verified: boolean
           website: string | null
         }
@@ -93,6 +123,7 @@ export type Database = {
           specialty?: string | null
           type: string
           updated_at?: string
+          vehicle_types?: Json
           verified?: boolean
           website?: string | null
         }
@@ -119,6 +150,7 @@ export type Database = {
           specialty?: string | null
           type?: string
           updated_at?: string
+          vehicle_types?: Json
           verified?: boolean
           website?: string | null
         }
@@ -153,6 +185,60 @@ export type Database = {
           },
         ]
       }
+      maintenance_records: {
+        Row: {
+          cost: number | null
+          created_at: string
+          date: string
+          description: string | null
+          garage_id: string | null
+          id: string
+          mileage_at_service: number | null
+          next_service_date: string | null
+          service_type: string
+          vehicle_id: string
+        }
+        Insert: {
+          cost?: number | null
+          created_at?: string
+          date?: string
+          description?: string | null
+          garage_id?: string | null
+          id?: string
+          mileage_at_service?: number | null
+          next_service_date?: string | null
+          service_type: string
+          vehicle_id: string
+        }
+        Update: {
+          cost?: number | null
+          created_at?: string
+          date?: string
+          description?: string | null
+          garage_id?: string | null
+          id?: string
+          mileage_at_service?: number | null
+          next_service_date?: string | null
+          service_type?: string
+          vehicle_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "maintenance_records_garage_id_fkey"
+            columns: ["garage_id"]
+            isOneToOne: false
+            referencedRelation: "garages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "maintenance_records_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "user_vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -180,6 +266,89 @@ export type Database = {
         }
         Relationships: []
       }
+      quote_requests: {
+        Row: {
+          created_at: string
+          description: string
+          garage_id: string
+          id: string
+          plate: string
+          service_type: string
+          status: string
+          user_id: string | null
+          vehicle_type: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          garage_id: string
+          id?: string
+          plate: string
+          service_type?: string
+          status?: string
+          user_id?: string | null
+          vehicle_type?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          garage_id?: string
+          id?: string
+          plate?: string
+          service_type?: string
+          status?: string
+          user_id?: string | null
+          vehicle_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_requests_garage_id_fkey"
+            columns: ["garage_id"]
+            isOneToOne: false
+            referencedRelation: "garages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      review_responses: {
+        Row: {
+          created_at: string
+          garage_owner_id: string
+          id: string
+          review_id: string
+          text: string
+        }
+        Insert: {
+          created_at?: string
+          garage_owner_id: string
+          id?: string
+          review_id: string
+          text: string
+        }
+        Update: {
+          created_at?: string
+          garage_owner_id?: string
+          id?: string
+          review_id?: string
+          text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "review_responses_garage_owner_id_fkey"
+            columns: ["garage_owner_id"]
+            isOneToOne: false
+            referencedRelation: "garage_owners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "review_responses_review_id_fkey"
+            columns: ["review_id"]
+            isOneToOne: false
+            referencedRelation: "reviews"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reviews: {
         Row: {
           author_name: string
@@ -187,10 +356,12 @@ export type Database = {
           garage_id: string
           helpful_count: number
           id: string
+          invoice_url: string | null
           rating: number
           text: string
           updated_at: string
           user_id: string
+          verified: boolean
         }
         Insert: {
           author_name: string
@@ -198,10 +369,12 @@ export type Database = {
           garage_id: string
           helpful_count?: number
           id?: string
+          invoice_url?: string | null
           rating: number
           text: string
           updated_at?: string
           user_id: string
+          verified?: boolean
         }
         Update: {
           author_name?: string
@@ -209,10 +382,12 @@ export type Database = {
           garage_id?: string
           helpful_count?: number
           id?: string
+          invoice_url?: string | null
           rating?: number
           text?: string
           updated_at?: string
           user_id?: string
+          verified?: boolean
         }
         Relationships: [
           {
@@ -242,6 +417,45 @@ export type Database = {
         }
         Relationships: []
       }
+      user_vehicles: {
+        Row: {
+          brand: string
+          created_at: string
+          id: string
+          mileage: number | null
+          model: string
+          plate: string | null
+          type: string
+          updated_at: string
+          user_id: string
+          year: number | null
+        }
+        Insert: {
+          brand: string
+          created_at?: string
+          id?: string
+          mileage?: number | null
+          model: string
+          plate?: string | null
+          type?: string
+          updated_at?: string
+          user_id: string
+          year?: number | null
+        }
+        Update: {
+          brand?: string
+          created_at?: string
+          id?: string
+          mileage?: number | null
+          model?: string
+          plate?: string | null
+          type?: string
+          updated_at?: string
+          user_id?: string
+          year?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -256,7 +470,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "moderator" | "user"
+      app_role: "admin" | "moderator" | "user" | "garage_owner"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -384,7 +598,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "moderator", "user"],
+      app_role: ["admin", "moderator", "user", "garage_owner"],
     },
   },
 } as const
