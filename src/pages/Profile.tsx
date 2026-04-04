@@ -101,7 +101,16 @@ const Profile = () => {
                 <Heart className="w-3 h-3" />
                 {favoriteIds.length} favoris
               </span>
-            </div>
+          </div>
+          <div className="flex gap-2 mt-2">
+            <Link to="/vehicles">
+              <Button variant="outline" size="sm" className="text-xs"><Car className="w-3.5 h-3.5 mr-1" /> Mes véhicules</Button>
+            </Link>
+            {ownerships.length > 0 && (
+              <Link to="/dashboard">
+                <Button variant="outline" size="sm" className="text-xs"><BarChart3 className="w-3.5 h-3.5 mr-1" /> Dashboard Pro</Button>
+              </Link>
+            )}
           </div>
         </motion.div>
 
