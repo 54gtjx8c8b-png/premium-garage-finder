@@ -1,6 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Star, BadgeCheck, MapPin, Phone, Globe, ShieldCheck, FileText } from 'lucide-react';
+import { ArrowLeft, Star, BadgeCheck, MapPin, Phone, Globe, ShieldCheck, FileText, Car, Bike, Truck, Zap, BatteryCharging } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import BookingForm from '@/components/garage/BookingForm';
