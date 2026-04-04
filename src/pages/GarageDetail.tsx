@@ -96,6 +96,15 @@ const GarageDetail = () => {
               }`}>
                 {garage.type === 'dealer' ? 'Concession' : 'Indépendant'}
               </span>
+              {garage.vehicleTypes.map(vt => {
+                const icons: Record<string, typeof Car> = { voiture: Car, moto: Bike, camion: Truck, trottinette: Zap, velo: BatteryCharging };
+                const VIcon = icons[vt] || Car;
+                return (
+                  <span key={vt} className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground px-3 py-1 rounded-full border border-border capitalize">
+                    <VIcon className="w-3 h-3" /> {vt}
+                  </span>
+                );
+              })}
               {garage.badges.map(badge => (
                 <span key={badge} className="text-xs font-medium text-muted-foreground px-3 py-1 rounded-full border border-border">
                   {badge}
