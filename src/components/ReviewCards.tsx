@@ -62,8 +62,13 @@ const ReviewCards = ({ searchQuery = '', activeFilter = 'all' }: ReviewCardsProp
         g.specialty.toLowerCase().includes(q);
       if (!matchesSearch) return false;
     }
-    // Category filter
-    if (activeFilter !== 'all') {
+    // Vehicle type filter
+    const vehicleFilters = ['voiture', 'moto', 'trottinette', 'camion', 'velo'];
+    if (vehicleFilters.includes(activeFilter)) {
+      const types = (g as any).vehicleTypes as string[] | undefined;
+      if (!types || !types.includes(activeFilter)) return false;
+    } else if (activeFilter !== 'all') {
+      // Category filter (specialty)
       const filterOption = FILTER_OPTIONS.find(f => f.id === activeFilter);
       if (filterOption) {
         const haystack = `${g.specialty} ${g.name} ${g.badges.join(' ')} ${g.type} ${g.keyInsight}`.toLowerCase();
