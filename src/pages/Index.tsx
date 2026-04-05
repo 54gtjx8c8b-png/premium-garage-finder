@@ -9,9 +9,13 @@ import HomeMap from '@/components/HomeMap';
 import { useGarages } from '@/hooks/useGarages';
 import { useGeolocation } from '@/hooks/useGeolocation';
 
+const RADIUS_OPTIONS = [5, 10, 25, 50, null] as const;
+export type RadiusKm = typeof RADIUS_OPTIONS[number];
+
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('all');
+  const [radius, setRadius] = useState<RadiusKm>(null);
   const { data: garages } = useGarages();
   const { position, loading, error, requestLocation, clearLocation } = useGeolocation();
 
@@ -31,6 +35,8 @@ const Index = () => {
             error={error}
             onRequestLocation={requestLocation}
             onClearLocation={clearLocation}
+            radius={radius}
+            onRadiusChange={setRadius}
           />
         </div>
 
@@ -39,7 +45,7 @@ const Index = () => {
             <ComparisonEngine />
           </div>
           <div className="lg:col-span-3">
-            <ReviewCards searchQuery={searchQuery} activeFilter={activeFilter} userPosition={position} />
+            <ReviewCards searchQuery={searchQuery} activeFilter={activeFilter} userPosition={position} radius={radius} />
           </div>
         </div>
       </main>

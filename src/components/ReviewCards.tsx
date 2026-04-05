@@ -32,9 +32,10 @@ interface ReviewCardsProps {
   searchQuery?: string;
   activeFilter?: string;
   userPosition?: { lat: number; lng: number } | null;
+  radius?: number | null;
 }
 
-const ReviewCards = ({ searchQuery = '', activeFilter = 'all', userPosition }: ReviewCardsProps) => {
+const ReviewCards = ({ searchQuery = '', activeFilter = 'all', userPosition, radius }: ReviewCardsProps) => {
   const [sortBy, setSortBy] = useState<SortMode>('score');
   const [quoteGarage, setQuoteGarage] = useState<{ name: string; id: string } | null>(null);
   const { data: garages, isLoading } = useGarages();
@@ -76,6 +77,11 @@ const ReviewCards = ({ searchQuery = '', activeFilter = 'all', userPosition }: R
         const haystack = `${g.specialty} ${g.name} ${g.badges.join(' ')} ${g.type} ${g.keyInsight}`.toLowerCase();
         return filterOption.keywords.some(kw => haystack.includes(kw));
       }
+    }
+    return true;
+  }).filter(g => {
+    if (userPosition && radius) {
+      return getDistanceKm(userPosition.lat, userPosition.lng, g.coords.lat, g.coords.lng) <= radius;
     }
     return true;
   });
