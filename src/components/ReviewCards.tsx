@@ -103,6 +103,7 @@ const ReviewCards = ({ searchQuery = '', activeFilter = 'all', userPosition }: R
             <SelectContent>
               <SelectItem value="score">Meilleur Score</SelectItem>
               <SelectItem value="reviews">Plus d'avis</SelectItem>
+              {userPosition && <SelectItem value="distance">Plus proche</SelectItem>}
             </SelectContent>
           </Select>
         </div>
