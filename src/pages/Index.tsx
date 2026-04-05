@@ -45,7 +45,7 @@ const Index = () => {
             <ComparisonEngine />
           </div>
           <div className="lg:col-span-3">
-            <ReviewCards searchQuery={searchQuery} activeFilter={activeFilter} userPosition={position} />
+            <ReviewCards searchQuery={searchQuery} activeFilter={activeFilter} userPosition={position} radius={radius} />
           </div>
         </div>
       </main>
