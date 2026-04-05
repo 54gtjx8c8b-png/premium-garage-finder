@@ -47,10 +47,18 @@ interface HomeMapProps {
   error: string | null;
   onRequestLocation: () => void;
   onClearLocation: () => void;
+  radius: number | null;
+  onRadiusChange: (r: number | null) => void;
 }
 
-const HomeMap = ({ garages, userPosition, loading, error, onRequestLocation, onClearLocation }: HomeMapProps) => {
-  const defaultCenter: [number, number] = [46.6, 2.5]; // France center
+const RADIUS_OPTIONS = [5, 10, 25, 50] as const;
+
+const HomeMap = ({ garages, userPosition, loading, error, onRequestLocation, onClearLocation, radius, onRadiusChange }: HomeMapProps) => {
+  const defaultCenter: [number, number] = [46.6, 2.5];
+
+  const visibleGarages = userPosition && radius
+    ? garages.filter(g => getDistanceKm(userPosition.lat, userPosition.lng, g.coords.lat, g.coords.lng) <= radius)
+    : garages;
 
   return (
     <motion.div
