@@ -80,9 +80,13 @@ const ReviewCards = ({ searchQuery = '', activeFilter = 'all', userPosition }: R
     return true;
   });
 
-  const sorted = [...filtered].sort((a, b) =>
-    sortBy === 'score' ? b.score - a.score : b.reviews - a.reviews
-  );
+  const sorted = [...filtered].sort((a, b) => {
+    if (sortBy === 'distance' && userPosition) {
+      return getDistanceKm(userPosition.lat, userPosition.lng, a.coords.lat, a.coords.lng) -
+             getDistanceKm(userPosition.lat, userPosition.lng, b.coords.lat, b.coords.lng);
+    }
+    return sortBy === 'reviews' ? b.reviews - a.reviews : b.score - a.score;
+  });
 
   return (
     <section className="px-4 py-5 max-w-lg mx-auto lg:max-w-none lg:px-0">
