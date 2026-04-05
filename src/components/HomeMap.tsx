@@ -73,7 +73,12 @@ const HomeMap = ({ garages, userPosition, loading, error, onRequestLocation, onC
         <div className="flex items-center gap-2">
           <MapPin className="w-4 h-4 text-primary" />
           <span className="text-xs font-semibold text-foreground">Carte des garages</span>
-          {userPosition && (
+          {userPosition && radius && (
+            <span className="text-[10px] text-muted-foreground bg-secondary px-2 py-0.5 rounded-full">
+              {visibleGarages.length} garage{visibleGarages.length !== 1 ? 's' : ''} dans {radius} km
+            </span>
+          )}
+          {userPosition && !radius && (
             <span className="text-[10px] text-muted-foreground bg-secondary px-2 py-0.5 rounded-full">
               Autour de vous
             </span>
@@ -103,6 +108,26 @@ const HomeMap = ({ garages, userPosition, loading, error, onRequestLocation, onC
         </div>
       </div>
 
+      {/* Radius filter chips */}
+      {userPosition && (
+        <div className="px-3 py-2 flex items-center gap-2 border-b border-border overflow-x-auto scrollbar-hide">
+          <span className="text-[10px] text-muted-foreground font-semibold shrink-0">Rayon :</span>
+          {([null, ...RADIUS_OPTIONS] as const).map((r) => (
+            <button
+              key={r ?? 'all'}
+              onClick={() => onRadiusChange(r)}
+              className={`shrink-0 px-2.5 py-1 rounded-full text-[10px] font-medium border transition-colors ${
+                radius === r
+                  ? 'bg-primary text-primary-foreground border-primary'
+                  : 'bg-transparent text-muted-foreground border-border hover:border-foreground/20'
+              }`}
+            >
+              {r === null ? 'Tous' : `${r} km`}
+            </button>
+          ))}
+        </div>
+      )}
+
       {error && (
         <div className="px-3 py-2 text-[11px] text-destructive bg-destructive/10 border-b border-destructive/20">
           {error}
@@ -122,7 +147,7 @@ const HomeMap = ({ garages, userPosition, loading, error, onRequestLocation, onC
             attribution='&copy; <a href="https://carto.com/">CARTO</a>'
             url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
           />
-          <FitBounds garages={garages} userPos={userPosition} />
+          <FitBounds garages={visibleGarages} userPos={userPosition} />
 
           {userPosition && (
             <Marker position={[userPosition.lat, userPosition.lng]} icon={userIcon}>
@@ -130,7 +155,7 @@ const HomeMap = ({ garages, userPosition, loading, error, onRequestLocation, onC
             </Marker>
           )}
 
-          {garages.map((garage) => (
+          {visibleGarages.map((garage) => (
             <Marker key={garage.id} position={[garage.coords.lat, garage.coords.lng]} icon={garageIcon}>
               <Popup>
                 <div className="min-w-[160px]">
@@ -152,13 +177,13 @@ const HomeMap = ({ garages, userPosition, loading, error, onRequestLocation, onC
       </div>
 
       {/* Distance list when geolocated */}
-      {userPosition && garages.length > 0 && (
+      {userPosition && visibleGarages.length > 0 && (
         <div className="p-3 border-t border-border">
           <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-2">
-            Distance depuis votre position
+            {radius ? `Garages dans ${radius} km` : 'Distance depuis votre position'}
           </p>
           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-            {[...garages]
+            {[...visibleGarages]
               .sort((a, b) =>
                 getDistanceKm(userPosition.lat, userPosition.lng, a.coords.lat, a.coords.lng) -
                 getDistanceKm(userPosition.lat, userPosition.lng, b.coords.lat, b.coords.lng)
