@@ -79,6 +79,11 @@ const ReviewCards = ({ searchQuery = '', activeFilter = 'all', userPosition, rad
       }
     }
     return true;
+  }).filter(g => {
+    if (userPosition && radius) {
+      return getDistanceKm(userPosition.lat, userPosition.lng, g.coords.lat, g.coords.lng) <= radius;
+    }
+    return true;
   });
 
   const sorted = [...filtered].sort((a, b) => {
