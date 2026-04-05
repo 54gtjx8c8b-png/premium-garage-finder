@@ -130,15 +130,13 @@ const ReviewCards = ({ searchQuery = '', activeFilter = 'all', userPosition }: R
                   </div>
                   <p className="text-muted-foreground text-[11px] md:text-xs mt-0.5">
                     {garage.specialty} · <span className="font-semibold">{garage.priceLevel}</span>
+                    {userPosition && (
+                      <span className="ml-1.5 inline-flex items-center gap-0.5 text-primary">
+                        <MapPin className="w-2.5 h-2.5" />
+                        {getDistanceKm(userPosition.lat, userPosition.lng, garage.coords.lat, garage.coords.lng)} km
+                      </span>
+                    )}
                   </p>
-                </div>
-                <div className="flex flex-col items-end gap-0.5">
-                  <div className="flex items-center gap-1">
-                    <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                    <span className="font-mono-data text-base md:text-lg font-bold text-foreground">{garage.rating}</span>
-                  </div>
-                  <span className="text-[10px] md:text-xs text-muted-foreground">{garage.reviews} avis</span>
-                </div>
               </div>
 
               <div className="flex items-center gap-2 flex-wrap">
