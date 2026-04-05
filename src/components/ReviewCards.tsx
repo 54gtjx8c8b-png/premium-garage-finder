@@ -1,4 +1,4 @@
-import { Star, Gauge, Eye, BadgeCheck, Phone, FileText, ShieldCheck, ArrowUpDown } from 'lucide-react';
+import { Star, Gauge, Eye, BadgeCheck, Phone, FileText, ShieldCheck, ArrowUpDown, MapPin } from 'lucide-react';
 import { FILTER_OPTIONS } from '@/components/FilterChips';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -9,6 +9,7 @@ import { useGarages, calculateTrustmarqScore } from '@/hooks/useGarages';
 import QuoteModal from '@/components/QuoteModal';
 import FavoriteButton from '@/components/FavoriteButton';
 import { Skeleton } from '@/components/ui/skeleton';
+import { getDistanceKm } from '@/hooks/useGeolocation';
 
 const QualityBar = ({ label, value }: { label: string; value: number }) => (
   <div className="space-y-1">
