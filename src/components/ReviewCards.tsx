@@ -1,4 +1,4 @@
-import { Star, Gauge, Eye, BadgeCheck, Phone, FileText, ShieldCheck, ArrowUpDown } from 'lucide-react';
+import { Star, Gauge, Eye, BadgeCheck, Phone, FileText, ShieldCheck, ArrowUpDown, MapPin } from 'lucide-react';
 import { FILTER_OPTIONS } from '@/components/FilterChips';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -9,6 +9,7 @@ import { useGarages, calculateTrustmarqScore } from '@/hooks/useGarages';
 import QuoteModal from '@/components/QuoteModal';
 import FavoriteButton from '@/components/FavoriteButton';
 import { Skeleton } from '@/components/ui/skeleton';
+import { getDistanceKm } from '@/hooks/useGeolocation';
 
 const QualityBar = ({ label, value }: { label: string; value: number }) => (
   <div className="space-y-1">
@@ -25,14 +26,15 @@ const QualityBar = ({ label, value }: { label: string; value: number }) => (
   </div>
 );
 
-type SortMode = 'score' | 'reviews';
+type SortMode = 'score' | 'reviews' | 'distance';
 
 interface ReviewCardsProps {
   searchQuery?: string;
   activeFilter?: string;
+  userPosition?: { lat: number; lng: number } | null;
 }
 
-const ReviewCards = ({ searchQuery = '', activeFilter = 'all' }: ReviewCardsProps) => {
+const ReviewCards = ({ searchQuery = '', activeFilter = 'all', userPosition }: ReviewCardsProps) => {
   const [sortBy, setSortBy] = useState<SortMode>('score');
   const [quoteGarage, setQuoteGarage] = useState<{ name: string; id: string } | null>(null);
   const { data: garages, isLoading } = useGarages();
@@ -78,9 +80,13 @@ const ReviewCards = ({ searchQuery = '', activeFilter = 'all' }: ReviewCardsProp
     return true;
   });
 
-  const sorted = [...filtered].sort((a, b) =>
-    sortBy === 'score' ? b.score - a.score : b.reviews - a.reviews
-  );
+  const sorted = [...filtered].sort((a, b) => {
+    if (sortBy === 'distance' && userPosition) {
+      return getDistanceKm(userPosition.lat, userPosition.lng, a.coords.lat, a.coords.lng) -
+             getDistanceKm(userPosition.lat, userPosition.lng, b.coords.lat, b.coords.lng);
+    }
+    return sortBy === 'reviews' ? b.reviews - a.reviews : b.score - a.score;
+  });
 
   return (
     <section className="px-4 py-5 max-w-lg mx-auto lg:max-w-none lg:px-0">
@@ -97,6 +103,7 @@ const ReviewCards = ({ searchQuery = '', activeFilter = 'all' }: ReviewCardsProp
             <SelectContent>
               <SelectItem value="score">Meilleur Score</SelectItem>
               <SelectItem value="reviews">Plus d'avis</SelectItem>
+              {userPosition && <SelectItem value="distance">Plus proche</SelectItem>}
             </SelectContent>
           </Select>
         </div>
@@ -123,6 +130,12 @@ const ReviewCards = ({ searchQuery = '', activeFilter = 'all' }: ReviewCardsProp
                   </div>
                   <p className="text-muted-foreground text-[11px] md:text-xs mt-0.5">
                     {garage.specialty} · <span className="font-semibold">{garage.priceLevel}</span>
+                    {userPosition && (
+                      <span className="ml-1.5 inline-flex items-center gap-0.5 text-primary">
+                        <MapPin className="w-2.5 h-2.5" />
+                        {getDistanceKm(userPosition.lat, userPosition.lng, garage.coords.lat, garage.coords.lng)} km
+                      </span>
+                    )}
                   </p>
                 </div>
                 <div className="flex flex-col items-end gap-0.5">
