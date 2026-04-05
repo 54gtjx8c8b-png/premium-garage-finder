@@ -9,9 +9,13 @@ import HomeMap from '@/components/HomeMap';
 import { useGarages } from '@/hooks/useGarages';
 import { useGeolocation } from '@/hooks/useGeolocation';
 
+const RADIUS_OPTIONS = [5, 10, 25, 50, null] as const;
+export type RadiusKm = typeof RADIUS_OPTIONS[number];
+
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('all');
+  const [radius, setRadius] = useState<RadiusKm>(null);
   const { data: garages } = useGarages();
   const { position, loading, error, requestLocation, clearLocation } = useGeolocation();
 
