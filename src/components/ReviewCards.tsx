@@ -137,6 +137,14 @@ const ReviewCards = ({ searchQuery = '', activeFilter = 'all', userPosition }: R
                       </span>
                     )}
                   </p>
+                </div>
+                <div className="flex flex-col items-end gap-0.5">
+                  <div className="flex items-center gap-1">
+                    <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                    <span className="font-mono-data text-base md:text-lg font-bold text-foreground">{garage.rating}</span>
+                  </div>
+                  <span className="text-[10px] md:text-xs text-muted-foreground">{garage.reviews} avis</span>
+                </div>
               </div>
 
               <div className="flex items-center gap-2 flex-wrap">
