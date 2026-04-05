@@ -35,6 +35,8 @@ const Index = () => {
             error={error}
             onRequestLocation={requestLocation}
             onClearLocation={clearLocation}
+            radius={radius}
+            onRadiusChange={setRadius}
           />
         </div>
 
