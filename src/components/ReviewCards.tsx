@@ -32,9 +32,10 @@ interface ReviewCardsProps {
   searchQuery?: string;
   activeFilter?: string;
   userPosition?: { lat: number; lng: number } | null;
+  radius?: number | null;
 }
 
-const ReviewCards = ({ searchQuery = '', activeFilter = 'all', userPosition }: ReviewCardsProps) => {
+const ReviewCards = ({ searchQuery = '', activeFilter = 'all', userPosition, radius }: ReviewCardsProps) => {
   const [sortBy, setSortBy] = useState<SortMode>('score');
   const [quoteGarage, setQuoteGarage] = useState<{ name: string; id: string } | null>(null);
   const { data: garages, isLoading } = useGarages();
