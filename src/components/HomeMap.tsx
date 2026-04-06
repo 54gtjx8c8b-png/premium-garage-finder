@@ -1,44 +1,10 @@
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
 import { motion } from 'framer-motion';
 import { MapPin, Navigation, Loader2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Garage } from '@/hooks/useGarages';
 import { getDistanceKm } from '@/hooks/useGeolocation';
 import { Link } from 'react-router-dom';
-import { useEffect } from 'react';
-
-const garageIcon = L.icon({
-  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
-});
-
-const userIcon = L.divIcon({
-  html: '<div style="width:16px;height:16px;background:hsl(217 91% 60%);border:3px solid white;border-radius:50%;box-shadow:0 0 8px rgba(59,130,246,0.6)"></div>',
-  iconSize: [16, 16],
-  iconAnchor: [8, 8],
-  className: '',
-});
-
-function FitBounds({ garages, userPos }: { garages: Garage[]; userPos: { lat: number; lng: number } | null }) {
-  const map = useMap();
-  useEffect(() => {
-    const points: [number, number][] = garages.map(g => [g.coords.lat, g.coords.lng]);
-    if (userPos) points.push([userPos.lat, userPos.lng]);
-    if (points.length > 1) {
-      map.fitBounds(L.latLngBounds(points), { padding: [30, 30], maxZoom: 12 });
-    } else if (points.length === 1) {
-      map.setView(points[0], 12);
-    }
-  }, [garages, userPos, map]);
-  return null;
-}
+import LeafletMapView, { garageMarkerIcon, userLocationIcon } from '@/components/maps/LeafletMapView';
 
 interface HomeMapProps {
   garages: Garage[];
@@ -53,12 +19,46 @@ interface HomeMapProps {
 
 const RADIUS_OPTIONS = [5, 10, 25, 50] as const;
 
+const escapeHtml = (value: string) =>
+  value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+
 const HomeMap = ({ garages, userPosition, loading, error, onRequestLocation, onClearLocation, radius, onRadiusChange }: HomeMapProps) => {
   const defaultCenter: [number, number] = [46.6, 2.5];
 
   const visibleGarages = userPosition && radius
     ? garages.filter(g => getDistanceKm(userPosition.lat, userPosition.lng, g.coords.lat, g.coords.lng) <= radius)
     : garages;
+
+  const markers = [
+    ...(userPosition
+      ? [{
+          id: 'user-location',
+          position: userPosition,
+          popupHtml: '<span style="font-size:12px;font-weight:600">Votre position</span>',
+          icon: userLocationIcon,
+        }]
+      : []),
+    ...visibleGarages.map((garage) => ({
+      id: garage.id,
+      position: garage.coords,
+      icon: garageMarkerIcon,
+      popupHtml: `
+        <div style="min-width:160px">
+          <p style="font-size:12px;font-weight:700;margin:0 0 2px 0">${escapeHtml(garage.name)}</p>
+          <p style="font-size:10px;color:#6b7280;margin:0">${escapeHtml(garage.specialty)}</p>
+          ${userPosition ? `<p style="font-size:10px;color:#2563eb;font-weight:600;margin:2px 0 0 0">${getDistanceKm(userPosition.lat, userPosition.lng, garage.coords.lat, garage.coords.lng)} km</p>` : ''}
+          <a href="/garage/${garage.slug}" style="font-size:10px;color:#3b82f6;font-weight:600;margin-top:4px;display:block;text-decoration:none">Voir la fiche →</a>
+        </div>
+      `,
+    })),
+  ];
+
+  const fitPoints = markers.map((marker) => [marker.position.lat, marker.position.lng] as [number, number]);
 
   return (
     <motion.div
@@ -68,7 +68,6 @@ const HomeMap = ({ garages, userPosition, loading, error, onRequestLocation, onC
       viewport={{ once: true }}
       transition={{ duration: 0.4, ease: [0.2, 0, 0, 1] }}
     >
-      {/* Geolocation controls */}
       <div className="p-3 flex items-center justify-between border-b border-border">
         <div className="flex items-center gap-2">
           <MapPin className="w-4 h-4 text-primary" />
@@ -108,7 +107,6 @@ const HomeMap = ({ garages, userPosition, loading, error, onRequestLocation, onC
         </div>
       </div>
 
-      {/* Radius filter chips */}
       {userPosition && (
         <div className="px-3 py-2 flex items-center gap-2 border-b border-border overflow-x-auto scrollbar-hide">
           <span className="text-[10px] text-muted-foreground font-semibold shrink-0">Rayon :</span>
@@ -134,49 +132,19 @@ const HomeMap = ({ garages, userPosition, loading, error, onRequestLocation, onC
         </div>
       )}
 
-      {/* Map */}
       <div className="relative aspect-[16/9] md:aspect-[21/9] z-0">
-        <MapContainer
+        <LeafletMapView
           center={defaultCenter}
           zoom={6}
-          scrollWheelZoom={false}
+          markers={markers}
+          fitPoints={fitPoints}
           className="w-full h-full"
           style={{ background: 'hsl(217 33% 17%)' }}
-        >
-          <TileLayer
-            attribution='&copy; <a href="https://carto.com/">CARTO</a>'
-            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-          />
-          <FitBounds garages={visibleGarages} userPos={userPosition} />
-
-          {userPosition && (
-            <Marker position={[userPosition.lat, userPosition.lng]} icon={userIcon}>
-              <Popup><span className="text-xs font-semibold">Votre position</span></Popup>
-            </Marker>
-          )}
-
-          {visibleGarages.map((garage) => (
-            <Marker key={garage.id} position={[garage.coords.lat, garage.coords.lng]} icon={garageIcon}>
-              <Popup>
-                <div className="min-w-[160px]">
-                  <p className="text-xs font-bold">{garage.name}</p>
-                  <p className="text-[10px] text-gray-500">{garage.specialty}</p>
-                  {userPosition && (
-                    <p className="text-[10px] text-blue-600 font-semibold mt-0.5">
-                      {getDistanceKm(userPosition.lat, userPosition.lng, garage.coords.lat, garage.coords.lng)} km
-                    </p>
-                  )}
-                  <Link to={`/garage/${garage.slug}`} className="text-[10px] text-blue-500 font-semibold mt-1 block">
-                    Voir la fiche →
-                  </Link>
-                </div>
-              </Popup>
-            </Marker>
-          ))}
-        </MapContainer>
+          maxFitZoom={12}
+          scrollWheelZoom={false}
+        />
       </div>
 
-      {/* Distance list when geolocated */}
       {userPosition && visibleGarages.length > 0 && (
         <div className="p-3 border-t border-border">
           <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-2">
