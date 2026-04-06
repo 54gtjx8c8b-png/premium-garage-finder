@@ -1,26 +1,30 @@
 import { MapPin } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
-
-// Fix default marker icon
-const defaultIcon = L.icon({
-  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
-});
+import LeafletMapView, { garageMarkerIcon } from '@/components/maps/LeafletMapView';
 
 interface GarageMapProps {
   address: string;
   coords: { lat: number; lng: number };
 }
 
+const escapeHtml = (value: string) =>
+  value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+
 const GarageMap = ({ address, coords }: GarageMapProps) => {
+  const markers = [
+    {
+      id: 'garage-location',
+      position: coords,
+      icon: garageMarkerIcon,
+      popupHtml: `<span style="font-size:12px;font-weight:600">${escapeHtml(address)}</span>`,
+    },
+  ];
+
   return (
     <motion.div
       className="surface-card overflow-hidden"
@@ -30,23 +34,16 @@ const GarageMap = ({ address, coords }: GarageMapProps) => {
       transition={{ duration: 0.4, delay: 0.1, ease: [0.2, 0, 0, 1] }}
     >
       <div className="relative aspect-[16/9] z-0">
-        <MapContainer
+        <LeafletMapView
           center={[coords.lat, coords.lng]}
           zoom={15}
-          scrollWheelZoom={false}
+          markers={markers}
+          fitPoints={[[coords.lat, coords.lng]]}
           className="w-full h-full"
           style={{ background: 'hsl(217 33% 17%)' }}
-        >
-          <TileLayer
-            attribution='&copy; <a href="https://carto.com/">CARTO</a>'
-            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-          />
-          <Marker position={[coords.lat, coords.lng]} icon={defaultIcon}>
-            <Popup>
-              <span className="text-xs font-semibold">{address}</span>
-            </Popup>
-          </Marker>
-        </MapContainer>
+          maxFitZoom={15}
+          scrollWheelZoom={false}
+        />
       </div>
 
       <div className="p-3 flex items-center justify-between">
