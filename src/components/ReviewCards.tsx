@@ -1,5 +1,5 @@
 import { Star, Gauge, Eye, BadgeCheck, Phone, FileText, ShieldCheck, ArrowUpDown, MapPin } from 'lucide-react';
-import { FILTER_OPTIONS } from '@/components/FilterChips';
+import { FILTER_OPTIONS, SERVICE_TYPES } from '@/components/FilterChips';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
@@ -33,9 +33,11 @@ interface ReviewCardsProps {
   activeFilter?: string;
   userPosition?: { lat: number; lng: number } | null;
   radius?: number | null;
+  selectedCity?: string;
+  minRating?: number;
 }
 
-const ReviewCards = ({ searchQuery = '', activeFilter = 'all', userPosition, radius }: ReviewCardsProps) => {
+const ReviewCards = ({ searchQuery = '', activeFilter = 'all', userPosition, radius, selectedCity, minRating = 0 }: ReviewCardsProps) => {
   const [sortBy, setSortBy] = useState<SortMode>('score');
   const [quoteGarage, setQuoteGarage] = useState<{ name: string; id: string } | null>(null);
   const { data: garages, isLoading } = useGarages();
@@ -56,6 +58,15 @@ const ReviewCards = ({ searchQuery = '', activeFilter = 'all', userPosition, rad
   }));
 
   const filtered = garagesWithScore.filter(g => {
+    // City filter
+    if (selectedCity) {
+      const isMatch = g.address.toLowerCase().includes(selectedCity.toLowerCase());
+      if (!isMatch) return false;
+    }
+    // Rating filter
+    if (minRating > 0 && g.rating < minRating) {
+      return false;
+    }
     // Text search
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
@@ -68,8 +79,12 @@ const ReviewCards = ({ searchQuery = '', activeFilter = 'all', userPosition, rad
     // Vehicle type filter
     const vehicleFilters = ['voiture', 'moto', 'trottinette', 'camion', 'velo'];
     if (vehicleFilters.includes(activeFilter)) {
-      const types = (g as any).vehicleTypes as string[] | undefined;
+      const types = g.vehicleTypes;
       if (!types || !types.includes(activeFilter)) return false;
+    } else if ((SERVICE_TYPES as readonly string[]).includes(activeFilter)) {
+      // Service type filter
+      const services = g.serviceTypes;
+      if (!services || !services.includes(activeFilter)) return false;
     } else if (activeFilter !== 'all') {
       // Category filter (specialty)
       const filterOption = FILTER_OPTIONS.find(f => f.id === activeFilter);

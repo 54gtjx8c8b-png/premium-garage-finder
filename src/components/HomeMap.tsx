@@ -15,6 +15,8 @@ interface HomeMapProps {
   onClearLocation: () => void;
   radius: number | null;
   onRadiusChange: (r: number | null) => void;
+  selectedCity?: string;
+  minRating?: number;
 }
 
 const RADIUS_OPTIONS = [5, 10, 25, 50] as const;
@@ -27,12 +29,21 @@ const escapeHtml = (value: string) =>
     .split('"').join('&quot;')
     .split("'").join('&#39;');
 
-const HomeMap = ({ garages, userPosition, loading, error, onRequestLocation, onClearLocation, radius, onRadiusChange }: HomeMapProps) => {
+const HomeMap = ({ garages, userPosition, loading, error, onRequestLocation, onClearLocation, radius, onRadiusChange, selectedCity, minRating = 0 }: HomeMapProps) => {
   const defaultCenter: [number, number] = [46.6, 2.5];
 
-  const visibleGarages = userPosition && radius
-    ? garages.filter(g => getDistanceKm(userPosition.lat, userPosition.lng, g.coords.lat, g.coords.lng) <= radius)
-    : garages;
+  const visibleGarages = garages.filter(g => {
+    if (selectedCity && !g.address.toLowerCase().includes(selectedCity.toLowerCase())) {
+      return false;
+    }
+    if (minRating > 0 && g.rating < minRating) {
+      return false;
+    }
+    if (userPosition && radius) {
+      return getDistanceKm(userPosition.lat, userPosition.lng, g.coords.lat, g.coords.lng) <= radius;
+    }
+    return true;
+  });
 
   const markers = [
     ...(userPosition

@@ -15,6 +15,8 @@ export type RadiusKm = typeof RADIUS_OPTIONS[number];
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('all');
+  const [selectedCity, setSelectedCity] = useState('');
+  const [minRating, setMinRating] = useState(0);
   const [radius, setRadius] = useState<RadiusKm>(null);
   const { data: garages } = useGarages();
   const { position, loading, error, requestLocation, clearLocation } = useGeolocation();
@@ -24,7 +26,14 @@ const Index = () => {
       <StickyHeader searchQuery={searchQuery} onSearchChange={setSearchQuery} />
       <main className="pb-20 md:pb-8 md:pt-4">
         <SearchHero searchQuery={searchQuery} onSearchChange={setSearchQuery} />
-        <FilterChips activeFilter={activeFilter} onFilterChange={setActiveFilter} />
+        <FilterChips 
+          activeFilter={activeFilter} 
+          onFilterChange={setActiveFilter} 
+          selectedCity={selectedCity}
+          onCityChange={setSelectedCity}
+          minRating={minRating}
+          onRatingChange={setMinRating}
+        />
 
         {/* Interactive map section */}
         <div className="px-4 max-w-6xl mx-auto lg:px-6 xl:px-8 mb-4">
@@ -37,6 +46,8 @@ const Index = () => {
             onClearLocation={clearLocation}
             radius={radius}
             onRadiusChange={setRadius}
+            selectedCity={selectedCity}
+            minRating={minRating}
           />
         </div>
 
@@ -45,7 +56,14 @@ const Index = () => {
             <ComparisonEngine />
           </div>
           <div className="lg:col-span-3">
-            <ReviewCards searchQuery={searchQuery} activeFilter={activeFilter} userPosition={position} radius={radius} />
+            <ReviewCards 
+              searchQuery={searchQuery} 
+              activeFilter={activeFilter} 
+              userPosition={position} 
+              radius={radius}
+              selectedCity={selectedCity}
+              minRating={minRating}
+            />
           </div>
         </div>
       </main>

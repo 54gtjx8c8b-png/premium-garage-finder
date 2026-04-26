@@ -37,6 +37,7 @@ export interface Garage {
   hours: { day: string; open: string; close: string }[];
   coords: { lat: number; lng: number };
   vehicleTypes: string[];
+  serviceTypes: string[];
 }
 
 function mapDbToGarage(db: DbGarage): Garage {
@@ -66,6 +67,7 @@ function mapDbToGarage(db: DbGarage): Garage {
     hours: (db.hours as { day: string; open: string; close: string }[]) || [],
     coords,
     vehicleTypes: (db.vehicle_types as string[]) || ['voiture'],
+    serviceTypes: (db.service_types as string[]) || ['entretien', 'reparation'],
   };
 }
 
