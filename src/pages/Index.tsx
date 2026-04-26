@@ -6,6 +6,7 @@ import ComparisonEngine from '@/components/ComparisonEngine';
 import ReviewCards from '@/components/ReviewCards';
 import BottomNav from '@/components/BottomNav';
 import HomeMap from '@/components/HomeMap';
+import QuoteComparator from '@/components/QuoteComparator';
 import { useGarages } from '@/hooks/useGarages';
 import { useGeolocation } from '@/hooks/useGeolocation';
 
@@ -66,6 +67,9 @@ const Index = () => {
             />
           </div>
         </div>
+
+        {/* Quote Comparator Section */}
+        <QuoteComparator />
       </main>
       <BottomNav />
     </div>

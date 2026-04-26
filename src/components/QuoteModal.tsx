@@ -16,21 +16,21 @@ interface QuoteModalProps {
   garageId?: string;
 }
 
-const VEHICLE_OPTIONS = [
-  { id: 'voiture', label: 'Voiture', icon: Car },
-  { id: 'moto', label: 'Moto', icon: Bike },
-  { id: 'trottinette', label: 'Trottinette', icon: Zap },
-  { id: 'camion', label: 'Camion', icon: Truck },
-  { id: 'velo', label: 'Vélo élec.', icon: BatteryCharging },
-];
-
-const SERVICE_OPTIONS = [
+export const SERVICE_OPTIONS = [
   { value: 'entretien', label: 'Entretien / Révision' },
   { value: 'reparation', label: 'Réparation' },
   { value: 'carrosserie', label: 'Carrosserie / Peinture' },
   { value: 'pneus', label: 'Pneus' },
   { value: 'diagnostic', label: 'Diagnostic' },
   { value: 'autre', label: 'Autre' },
+];
+
+export const VEHICLE_OPTIONS = [
+  { id: 'voiture', label: 'Voiture', icon: Car },
+  { id: 'moto', label: 'Moto', icon: Bike },
+  { id: 'trottinette', label: 'Trottinette', icon: Zap },
+  { id: 'camion', label: 'Camion', icon: Truck },
+  { id: 'velo', label: 'Vélo élec.', icon: BatteryCharging },
 ];
 
 const QuoteModal = ({ open, onClose, garageName, garageId }: QuoteModalProps) => {

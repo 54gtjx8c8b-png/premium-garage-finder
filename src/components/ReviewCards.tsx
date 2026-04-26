@@ -10,6 +10,7 @@ import QuoteModal from '@/components/QuoteModal';
 import FavoriteButton from '@/components/FavoriteButton';
 import { Skeleton } from '@/components/ui/skeleton';
 import { getDistanceKm } from '@/hooks/useGeolocation';
+import PriceFairnessIndicator from '@/components/PriceFairnessIndicator';
 
 const QualityBar = ({ label, value }: { label: string; value: number }) => (
   <div className="space-y-1">
@@ -167,6 +168,8 @@ const ReviewCards = ({ searchQuery = '', activeFilter = 'all', userPosition, rad
                   <span className="text-[10px] md:text-xs text-muted-foreground">{garage.reviews} avis</span>
                 </div>
               </div>
+
+              <PriceFairnessIndicator garageRating={garage.rating} garageName={garage.name} compact />
 
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="inline-flex items-center gap-1 text-[10px] md:text-xs font-bold bg-primary/10 text-primary px-2.5 py-1 rounded-full border border-primary/20">
