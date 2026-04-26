@@ -126,3 +126,35 @@
   .animate-delay-200 { animation-delay: 200ms; }
   .animate-delay-300 { animation-delay: 300ms; }
 }
+
+
+/* Light mode styles */
+.light {
+  --background: 0 0% 100%;
+  --foreground: 222 47% 11%;
+  --card: 0 0% 96%;
+  --card-foreground: 222 47% 11%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
+  --secondary: 217 33% 88%;
+  --secondary-foreground: 217 33% 20%;
+  --muted: 217 33% 88%;
+  --muted-foreground: 217 33% 40%;
+  --border: 217 33% 88%;
+  --input: 217 33% 92%;
+  --surface: 0 0% 96%;
+  --surface-elevated: 0 0% 100%;
+  --glass: 217 33% 100% / 0.6;
+  --glass-border: 217 33% 0% / 0.1;
+  --glass-hover: 217 33% 0% / 0.05;
+  --sidebar-background: 0 0% 100%;
+  --sidebar-foreground: 222 47% 11%;
+  --sidebar-accent: 217 33% 88%;
+  --sidebar-accent-foreground: 222 47% 11%;
+  --sidebar-border: 217 33% 88%;
+}
+
+/* Smooth transitions between themes */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}

@@ -2,6 +2,7 @@ import { Search, BadgeCheck, Home, Trophy, Bookmark, LogOut, User } from 'lucide
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import ThemeToggle from '@/components/ThemeToggle';
 
 const navLinks = [
   { id: 'home', label: 'Home', icon: Home },
@@ -68,6 +69,7 @@ const StickyHeader = ({ searchQuery, onSearchChange }: StickyHeaderProps) => {
           </nav>
 
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             {user ? (
               <div className="flex items-center gap-2">
                 <Link to="/profile" className="flex items-center gap-1.5 text-xs md:text-sm text-muted-foreground hover:text-foreground transition-colors">
