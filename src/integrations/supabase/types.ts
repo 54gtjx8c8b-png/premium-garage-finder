@@ -43,6 +43,50 @@ export type Database = {
           },
         ]
       }
+      garage_claims: {
+        Row: {
+          business_email: string
+          created_at: string
+          garage_id: string
+          id: string
+          justification: string | null
+          review_note: string | null
+          reviewed_at: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          business_email: string
+          created_at?: string
+          garage_id: string
+          id?: string
+          justification?: string | null
+          review_note?: string | null
+          reviewed_at?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          business_email?: string
+          created_at?: string
+          garage_id?: string
+          id?: string
+          justification?: string | null
+          review_note?: string | null
+          reviewed_at?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "garage_claims_garage_id_fkey"
+            columns: ["garage_id"]
+            isOneToOne: false
+            referencedRelation: "garages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       garage_owners: {
         Row: {
           created_at: string

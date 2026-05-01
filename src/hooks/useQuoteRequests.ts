@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
+export type QuoteStatus = 'pending' | 'accepted' | 'rejected' | 'completed';
+
 export function useCreateQuoteRequest() {
   const queryClient = useQueryClient();
   return useMutation({
@@ -32,6 +34,22 @@ export function useGarageQuoteRequests(garageId: string) {
         .order('created_at', { ascending: false });
       if (error) throw error;
       return data || [];
+    },
+  });
+}
+
+export function useUpdateQuoteStatus() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: QuoteStatus }) => {
+      const { error } = await supabase
+        .from('quote_requests')
+        .update({ status })
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['quote-requests'] });
     },
   });
 }

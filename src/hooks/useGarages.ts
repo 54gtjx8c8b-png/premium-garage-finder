@@ -66,8 +66,8 @@ function mapDbToGarage(db: DbGarage): Garage {
     images: (db.images as string[]) || [],
     hours: (db.hours as { day: string; open: string; close: string }[]) || [],
     coords,
-    vehicleTypes: (db.vehicle_types as string[]) || ['voiture'],
-    serviceTypes: (db.service_types as string[]) || ['entretien', 'reparation'],
+    vehicleTypes: ((db as any).vehicle_types as string[]) || ['voiture'],
+    serviceTypes: ((db as any).service_types as string[]) || ['entretien', 'reparation'],
   };
 }
 
