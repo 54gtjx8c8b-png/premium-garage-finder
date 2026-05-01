@@ -1,100 +1,67 @@
+## Finalisation de l'Espace Pro Garagiste
 
+Le squelette du Dashboard existe déjà (`/dashboard`, hooks `useGarageOwnership`, `useReviewResponses`, table `garage_owners`), mais il manque les pièces qui rendent la fonctionnalité réellement utilisable de bout en bout.
 
-## Plan : Transformation TRUSTMARQ en plateforme multi-véhicules complète
+### Constat actuel
 
-Ce plan couvre les 5 fonctionnalités majeures discutées : catégories multi-véhicules, devis amélioré, espace pro garagiste, carnet d'entretien digital, et vérification des avis.
-
----
-
-### 1. Catégories multi-véhicules
-
-**Base de données :**
-- Ajouter colonne `vehicle_types` (jsonb, default `'["voiture"]'`) à la table `garages`
-- Mettre à jour les garages existants avec des types de véhicules
-
-**Frontend :**
-- Ajouter de nouveaux FilterChips : Voiture (Car), Moto (Bike), Trottinette (Scooter), Camion (Truck), Vélo électrique (E-bike)
-- Modifier `FilterChips.tsx` avec les nouvelles catégories et icônes
-- Mettre à jour le filtrage dans `ReviewCards.tsx` pour chercher dans `vehicle_types`
-- Afficher les types de véhicules acceptés sur la fiche garage (`GarageDetail.tsx`)
+- ✅ Page `/dashboard` avec stats, onglets Avis/Devis et formulaire de réponse
+- ✅ Tables `garage_owners`, `review_responses`, `quote_requests` en place
+- ❌ **Aucun moyen pour un garagiste de réclamer sa fiche** → le dashboard est inaccessible en pratique
+- ❌ Pas de lien Dashboard dans `BottomNav` ni `StickyHeader`
+- ❌ Pas de gestion du statut des devis (toujours "En attente")
+- ❌ Pas d'état vide engageant pour l'onboarding pro
 
 ---
 
-### 2. Devis amélioré avec sélection véhicule/prestation
+### Étape 1 — Système de "claim" d'une fiche garage
 
-**Base de données :**
-- Créer table `quote_requests` (id, garage_id, user_id nullable, plate, vehicle_type, service_type, description, status, created_at) avec RLS
-- Types de prestations : Entretien, Réparation, Carrosserie, Pneus, Diagnostic, Autre
+**Objectif** : un utilisateur connecté peut revendiquer un garage existant et devenir `garage_owner` après validation.
 
-**Frontend :**
-- Refondre `QuoteModal.tsx` en formulaire multi-étapes :
-  1. Type de véhicule (voiture/moto/trottinette/camion/vélo)
-  2. Type de prestation (select)
-  3. Immatriculation + description du problème
-- Sauvegarder en base au lieu du simple affichage actuel
-- Ajouter confirmation avec numéro de demande
+- Créer une table `garage_claims` (id, user_id, garage_id, business_email, justification, status `pending`/`approved`/`rejected`, created_at) avec RLS :
+  - L'utilisateur peut insérer/voir ses propres demandes
+  - Seuls les admins peuvent approuver (utilise le rôle `admin` existant via `has_role`)
+- Trigger : à l'approbation d'un claim, insérer automatiquement la ligne dans `garage_owners`
+- Pour la démo, ajouter une **auto-approbation simple** : un claim s'auto-approuve si l'email professionnel saisi correspond au domaine du `website` du garage (sinon reste `pending`)
 
----
+### Étape 2 — Page d'onboarding pro `/pro/claim`
 
-### 3. Espace professionnel garagiste (Dashboard)
+- Nouvelle page `src/pages/ClaimGarage.tsx`
+- Champ recherche/autocomplete sur les garages existants (réutilise `useGarages`)
+- Formulaire : email professionnel + courte justification
+- Affichage de l'état des claims en cours de l'utilisateur
+- Bouton "Accéder au dashboard" si déjà propriétaire
 
-**Base de données :**
-- Ajouter rôle `'garage_owner'` au type enum `app_role`
-- Créer table `garage_owners` (id, user_id, garage_id, UNIQUE) avec RLS
-- Créer table `review_responses` (id, review_id, garage_owner_id, text, created_at) avec RLS — lisible publiquement, insertable par le propriétaire
+### Étape 3 — Améliorer le Dashboard existant
 
-**Frontend :**
-- Nouvelle page `/dashboard` avec protection par rôle
-- Onglets : Vue d'ensemble (stats), Avis reçus (avec réponse), Demandes de devis
-- Composants : `DashboardStats` (nombre d'avis, note moyenne, vues), `DashboardReviews` (liste + formulaire de réponse), `DashboardQuotes` (liste des devis reçus)
-- Afficher les réponses du garagiste sous les avis dans `GarageReviews.tsx`
-- Ajouter lien Dashboard dans `StickyHeader` et `BottomNav` pour les owners
+- **Bouton de gestion des devis** : passer un devis de `pending` → `accepted` / `rejected` / `completed` (mutation Supabase + toast)
+- **Filtre par statut** sur l'onglet Devis (chips : Tous / En attente / Acceptés / Terminés)
+- **Notification visuelle** : badge "Nouveau" sur les devis ≤ 24 h
+- **État vide amélioré** : si pas de garage owné, CTA "Revendiquer ma fiche" → `/pro/claim` (au lieu du simple message actuel)
 
----
+### Étape 4 — Navigation
 
-### 4. Carnet d'entretien digital
+- `BottomNav` : remplacer dynamiquement l'onglet "Véhicules" par "Pro" (icône `Briefcase`) si l'utilisateur est `garage_owner`, sinon garder Véhicules. Alternativement, ajouter un 5e onglet conditionnel.
+- `StickyHeader` (desktop) : afficher un lien "Dashboard Pro" dans la nav si owner détecté
+- Sur la page `/profile`, ajouter une carte CTA "Vous êtes garagiste ?" → `/pro/claim`
 
-**Base de données :**
-- Créer table `user_vehicles` (id, user_id, type, brand, model, plate, year, mileage, created_at) avec RLS
-- Créer table `maintenance_records` (id, vehicle_id, garage_id nullable, service_type, description, date, mileage_at_service, next_service_date, cost, created_at) avec RLS
-- Les deux tables : accès limité au propriétaire (user_id via vehicle)
+### Étape 5 — Affichage public côté fiche garage
 
-**Frontend :**
-- Nouvelle page `/vehicles` accessible depuis le profil et la navigation
-- Liste des véhicules avec ajout/modification
-- Pour chaque véhicule : historique d'entretien chronologique
-- Formulaire d'ajout d'intervention (type, date, kilométrage, coût, garage associé)
-- Indicateur visuel de rappel (prochain entretien basé sur `next_service_date`)
-- Onglet supplémentaire "Mes véhicules" dans la page Profil
+- Sur `GarageDetail.tsx`, badge discret "Fiche revendiquée par le propriétaire" si la fiche a au moins un `garage_owner` actif (renforce la confiance)
 
 ---
 
-### 5. Vérification des avis avec upload de facture
+### Détails techniques
 
-**Base de données :**
-- Créer un bucket Storage `review-invoices` (privé)
-- Ajouter colonnes à `reviews` : `invoice_url` (text nullable), `verified` (boolean default false)
-- Politique Storage : upload par le propriétaire de l'avis, lecture par admins
+- **Migrations SQL** :
+  - `garage_claims` (avec RLS + trigger d'approbation)
+  - Ajout colonne `status` valeurs `accepted`/`rejected`/`completed` autorisées sur `quote_requests` (déjà text, juste valider)
+- **Nouveaux hooks** : `useGarageClaims`, `useCreateClaim`, `useUpdateQuoteStatus`, `useGarageHasOwner(garageId)`
+- **Nouvelles routes** : `/pro/claim` ajoutée dans `App.tsx`
+- **Fichiers modifiés** : `Dashboard.tsx`, `BottomNav.tsx`, `StickyHeader.tsx`, `Profile.tsx`, `GarageDetail.tsx`, `App.tsx`
+- **Nouveaux fichiers** : `src/pages/ClaimGarage.tsx`, `src/hooks/useGarageClaims.ts`, `src/components/dashboard/QuoteStatusActions.tsx`
 
-**Frontend :**
-- Ajouter un champ upload de facture (image/PDF) dans le formulaire d'avis de `GarageReviews.tsx`
-- Badge "Avis vérifié" (icône ShieldCheck) affiché à côté des avis avec facture validée
-- Upload vers le bucket Storage lors de la soumission
-- Affichage conditionnel du badge vérifié dans la liste des avis
+### Hors scope (à faire dans une étape ultérieure)
 
----
-
-### Ordre d'implémentation
-
-1. **Multi-véhicules** — migration DB + filtres (fondation pour tout le reste)
-2. **Devis amélioré** — migration `quote_requests` + refonte modal
-3. **Vérification des avis** — migration + storage + UI badge
-4. **Carnet d'entretien** — tables véhicules/interventions + pages
-5. **Espace pro** — rôle garage_owner + dashboard + réponses aux avis
-
-### Fichiers impactés
-
-- **Nouveaux** : `src/pages/Dashboard.tsx`, `src/pages/Vehicles.tsx`, `src/components/dashboard/*`, `src/components/vehicles/*`, `src/hooks/useVehicles.ts`, `src/hooks/useQuoteRequests.ts`
-- **Modifiés** : `FilterChips.tsx`, `ReviewCards.tsx`, `QuoteModal.tsx`, `GarageReviews.tsx`, `GarageDetail.tsx`, `Profile.tsx`, `App.tsx`, `BottomNav.tsx`, `StickyHeader.tsx`, `useGarages.ts`
-- **Migrations** : 5-6 fichiers SQL pour les nouvelles tables, colonnes, et bucket storage
-
+- Interface admin pour valider manuellement les claims `pending` → on s'appuie sur l'auto-approbation par domaine pour l'instant
+- Statistiques avancées (vues, conversions) → reportées
+- Notifications email → reportées
