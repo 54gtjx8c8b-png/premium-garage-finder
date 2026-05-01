@@ -1,6 +1,6 @@
 import { Link, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Star, BadgeCheck, Heart, MessageSquare, User, LogOut, Car, BarChart3 } from 'lucide-react';
+import { ArrowLeft, Star, BadgeCheck, Heart, MessageSquare, User, LogOut, Car, BarChart3, Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/contexts/AuthContext';
@@ -103,13 +103,17 @@ const Profile = () => {
             </span>
             </div>
           </div>
-          <div className="flex gap-2 mt-2">
+          <div className="flex gap-2 mt-2 flex-wrap">
             <Link to="/vehicles">
               <Button variant="outline" size="sm" className="text-xs"><Car className="w-3.5 h-3.5 mr-1" /> Mes véhicules</Button>
             </Link>
-            {ownerships.length > 0 && (
+            {ownerships.length > 0 ? (
               <Link to="/dashboard">
                 <Button variant="outline" size="sm" className="text-xs"><BarChart3 className="w-3.5 h-3.5 mr-1" /> Dashboard Pro</Button>
+              </Link>
+            ) : (
+              <Link to="/pro/claim">
+                <Button variant="outline" size="sm" className="text-xs"><Briefcase className="w-3.5 h-3.5 mr-1" /> Espace Pro</Button>
               </Link>
             )}
           </div>

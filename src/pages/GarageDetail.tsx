@@ -1,6 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Star, BadgeCheck, MapPin, Phone, Globe, ShieldCheck, FileText, Car, Bike, Truck, Zap, BatteryCharging } from 'lucide-react';
+import { ArrowLeft, Star, BadgeCheck, MapPin, Phone, Globe, ShieldCheck, FileText, Car, Bike, Truck, Zap, BatteryCharging, CheckCircle2 } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import BookingForm from '@/components/garage/BookingForm';
@@ -10,6 +10,7 @@ import GarageMap from '@/components/garage/GarageMap';
 import GarageReviews from '@/components/garage/GarageReviews';
 import QuoteModal from '@/components/QuoteModal';
 import { useGarage, calculateTrustmarqScore } from '@/hooks/useGarages';
+import { useGarageHasOwner } from '@/hooks/useGarageClaims';
 import FavoriteButton from '@/components/FavoriteButton';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -17,6 +18,7 @@ const GarageDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [quoteOpen, setQuoteOpen] = useState(false);
   const { data: garage, isLoading } = useGarage(id || '');
+  const { data: hasOwner } = useGarageHasOwner(garage?.id);
 
   if (isLoading) {
     return (
@@ -89,6 +91,12 @@ const GarageDetail = () => {
                 <ShieldCheck className="w-3.5 h-3.5" />
                 Score: {score}/100
               </span>
+              {hasOwner && (
+                <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-600 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  Fiche revendiquée
+                </span>
+              )}
               <span className={`text-xs font-medium px-3 py-1 rounded-full border ${
                 garage.type === 'dealer'
                   ? 'text-[hsl(var(--warning))] border-[hsl(var(--warning))]/20 bg-[hsl(var(--warning))]/10'

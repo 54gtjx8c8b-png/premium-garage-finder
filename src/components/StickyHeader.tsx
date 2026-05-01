@@ -1,7 +1,8 @@
-import { Search, BadgeCheck, Home, Trophy, Bookmark, LogOut, User } from 'lucide-react';
+import { Search, BadgeCheck, Home, Trophy, Bookmark, LogOut, User, Briefcase } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useGarageOwnership } from '@/hooks/useDashboard';
 import ThemeToggle from '@/components/ThemeToggle';
 
 const navLinks = [
@@ -19,6 +20,8 @@ const StickyHeader = ({ searchQuery, onSearchChange }: StickyHeaderProps) => {
   const [localQuery, setLocalQuery] = useState('');
   const [activeNav, setActiveNav] = useState('home');
   const { user, signOut } = useAuth();
+  const { data: ownerships = [] } = useGarageOwnership();
+  const isOwner = ownerships.length > 0;
 
   const query = searchQuery ?? localQuery;
   const setQuery = onSearchChange ?? setLocalQuery;
@@ -72,6 +75,11 @@ const StickyHeader = ({ searchQuery, onSearchChange }: StickyHeaderProps) => {
             <ThemeToggle />
             {user ? (
               <div className="flex items-center gap-2">
+                {isOwner && (
+                  <Link to="/dashboard" className="hidden md:flex items-center gap-1.5 text-xs md:text-sm text-primary font-semibold hover:text-primary/80 transition-colors">
+                    <Briefcase className="w-4 h-4" /> Pro
+                  </Link>
+                )}
                 <Link to="/profile" className="flex items-center gap-1.5 text-xs md:text-sm text-muted-foreground hover:text-foreground transition-colors">
                   <User className="w-4 h-4" />
                   <span className="hidden md:inline">{user.email?.split('@')[0]}</span>
