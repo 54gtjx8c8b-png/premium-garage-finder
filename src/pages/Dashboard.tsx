@@ -103,9 +103,14 @@ function GarageDashboard({ ownershipId, garageId, garage }: { ownershipId: strin
   const reviewIds = reviews.map(r => r.id);
   const { data: responses = [] } = useReviewResponses(reviewIds);
   const { data: quotes = [], isLoading: loadingQuotes } = useGarageQuoteRequests(garageId);
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
 
   const responseMap = new Map(responses.map(r => [r.review_id, r]));
   const avgRating = reviews.length ? (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1) : '—';
+  const pendingCount = quotes.filter(q => q.status === 'pending').length;
+
+  const filteredQuotes = quotes.filter(q => statusFilter === 'all' || q.status === statusFilter);
+  const isRecent = (date: string) => Date.now() - new Date(date).getTime() < 24 * 60 * 60 * 1000;
 
   return (
     <motion.div className="py-5 space-y-4" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
@@ -120,9 +125,14 @@ function GarageDashboard({ ownershipId, garageId, garage }: { ownershipId: strin
             <p className="text-lg font-bold text-primary">{avgRating}</p>
             <p className="text-[10px] text-muted-foreground">Note moy.</p>
           </div>
-          <div className="text-center p-2 rounded-xl bg-primary/5">
+          <div className="text-center p-2 rounded-xl bg-primary/5 relative">
             <p className="text-lg font-bold text-primary">{quotes.length}</p>
             <p className="text-[10px] text-muted-foreground">Devis</p>
+            {pendingCount > 0 && (
+              <span className="absolute top-1 right-1 text-[9px] font-bold text-amber-600 bg-amber-500/15 px-1.5 rounded-full">
+                {pendingCount}
+              </span>
+            )}
           </div>
         </div>
       </div>
@@ -134,27 +144,53 @@ function GarageDashboard({ ownershipId, garageId, garage }: { ownershipId: strin
         </TabsList>
 
         <TabsContent value="reviews" className="mt-3 space-y-2">
-          {loadingReviews ? <Skeleton className="h-20" /> : reviews.map(review => (
+          {loadingReviews ? <Skeleton className="h-20" /> : reviews.length === 0 ? (
+            <p className="text-xs text-muted-foreground text-center py-4">Aucun avis pour le moment</p>
+          ) : reviews.map(review => (
             <ReviewWithResponse key={review.id} review={review} response={responseMap.get(review.id)} ownershipId={ownershipId} />
           ))}
         </TabsContent>
 
         <TabsContent value="quotes" className="mt-3 space-y-2">
-          {loadingQuotes ? <Skeleton className="h-20" /> : quotes.length === 0 ? (
+          <div className="flex gap-1.5 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide">
+            {STATUS_FILTERS.map(f => (
+              <button
+                key={f.id}
+                onClick={() => setStatusFilter(f.id)}
+                className={`text-[10px] px-2.5 py-1 rounded-full font-semibold whitespace-nowrap transition-colors ${
+                  statusFilter === f.id ? 'bg-primary text-primary-foreground' : 'bg-secondary/60 text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+          {loadingQuotes ? <Skeleton className="h-20" /> : filteredQuotes.length === 0 ? (
             <p className="text-xs text-muted-foreground text-center py-4">Aucune demande de devis</p>
-          ) : quotes.map(q => (
-            <div key={q.id} className="surface-card p-3 space-y-1">
-              <div className="flex justify-between items-start">
-                <div>
-                  <span className="text-xs font-semibold text-foreground capitalize">{q.vehicle_type} · {q.service_type}</span>
+          ) : filteredQuotes.map(q => (
+            <div key={q.id} className="surface-card p-3 space-y-1.5">
+              <div className="flex justify-between items-start gap-2">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs font-semibold text-foreground capitalize">{q.vehicle_type} · {q.service_type}</span>
+                    {isRecent(q.created_at) && (
+                      <span className="text-[9px] font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded-full">Nouveau</span>
+                    )}
+                  </div>
                   <p className="text-[10px] text-muted-foreground">{q.plate}</p>
                 </div>
-                <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${q.status === 'pending' ? 'bg-amber-500/10 text-amber-600' : 'bg-primary/10 text-primary'}`}>
-                  {q.status === 'pending' ? 'En attente' : q.status}
+                <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium shrink-0 ${
+                  q.status === 'pending' ? 'bg-amber-500/10 text-amber-600' :
+                  q.status === 'accepted' ? 'bg-primary/10 text-primary' :
+                  q.status === 'rejected' ? 'bg-destructive/10 text-destructive' :
+                  'bg-emerald-500/10 text-emerald-600'
+                }`}>
+                  {q.status === 'pending' ? 'En attente' : q.status === 'accepted' ? 'Accepté' : q.status === 'rejected' ? 'Refusé' : 'Terminé'}
                 </span>
               </div>
               <p className="text-xs text-foreground/70">{q.description}</p>
               <p className="text-[10px] text-muted-foreground">{formatDistanceToNow(new Date(q.created_at), { addSuffix: true, locale: fr })}</p>
+              <QuoteStatusActions quoteId={q.id} status={q.status} />
             </div>
           ))}
         </TabsContent>
