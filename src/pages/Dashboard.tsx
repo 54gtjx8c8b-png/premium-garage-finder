@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Star, BarChart3, MessageSquare, FileText, Send } from 'lucide-react';
+import { ArrowLeft, Star, Briefcase, MessageSquare, FileText, Send, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -15,6 +15,15 @@ import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import BottomNav from '@/components/BottomNav';
+import QuoteStatusActions from '@/components/dashboard/QuoteStatusActions';
+
+const STATUS_FILTERS = [
+  { id: 'all', label: 'Tous' },
+  { id: 'pending', label: 'En attente' },
+  { id: 'accepted', label: 'Acceptés' },
+  { id: 'completed', label: 'Terminés' },
+] as const;
+type StatusFilter = typeof STATUS_FILTERS[number]['id'];
 
 const Dashboard = () => {
   const { user, loading } = useAuth();
@@ -38,13 +47,32 @@ const Dashboard = () => {
 
   if (ownedGarages.length === 0) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center space-y-3 p-6">
-          <BarChart3 className="w-12 h-12 text-muted-foreground mx-auto" />
-          <h2 className="text-lg font-bold text-foreground">Espace Professionnel</h2>
-          <p className="text-sm text-muted-foreground max-w-sm">Vous n'êtes pas encore rattaché à un garage. Contactez-nous pour associer votre compte.</p>
-          <Link to="/"><Button variant="outline">Retour à l'accueil</Button></Link>
-        </div>
+      <div className="min-h-screen bg-background flex items-center justify-center px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center space-y-4 p-6 max-w-sm surface-card"
+        >
+          <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto">
+            <Briefcase className="w-7 h-7 text-primary" />
+          </div>
+          <div className="space-y-1.5">
+            <h2 className="text-lg font-bold text-foreground">Espace Professionnel</h2>
+            <p className="text-sm text-muted-foreground">
+              Vous êtes garagiste ? Revendiquez votre fiche pour gérer vos avis et recevoir les demandes de devis.
+            </p>
+          </div>
+          <div className="flex flex-col gap-2">
+            <Link to="/pro/claim">
+              <Button className="w-full">
+                <Sparkles className="w-4 h-4" /> Revendiquer ma fiche
+              </Button>
+            </Link>
+            <Link to="/">
+              <Button variant="ghost" size="sm" className="w-full text-xs">Retour à l'accueil</Button>
+            </Link>
+          </div>
+        </motion.div>
       </div>
     );
   }
