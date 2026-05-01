@@ -1,16 +1,21 @@
-import { Home, Heart, User, Car } from 'lucide-react';
+import { Home, Heart, User, Car, Briefcase } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
-
-const tabs = [
-  { id: '/', label: 'Accueil', icon: Home },
-  { id: '/favorites', label: 'Favoris', icon: Heart },
-  { id: '/vehicles', label: 'Véhicules', icon: Car },
-  { id: '/profile', label: 'Profil', icon: User },
-];
+import { useGarageOwnership } from '@/hooks/useDashboard';
 
 const BottomNav = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { data: ownerships = [] } = useGarageOwnership();
+  const isOwner = ownerships.length > 0;
+
+  const tabs = [
+    { id: '/', label: 'Accueil', icon: Home },
+    { id: '/favorites', label: 'Favoris', icon: Heart },
+    isOwner
+      ? { id: '/dashboard', label: 'Pro', icon: Briefcase }
+      : { id: '/vehicles', label: 'Véhicules', icon: Car },
+    { id: '/profile', label: 'Profil', icon: User },
+  ];
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-t border-border safe-bottom md:hidden">
