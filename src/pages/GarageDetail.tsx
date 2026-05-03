@@ -9,6 +9,7 @@ import GarageHours from '@/components/garage/GarageHours';
 import GarageMap from '@/components/garage/GarageMap';
 import GarageReviews from '@/components/garage/GarageReviews';
 import QuoteModal from '@/components/QuoteModal';
+import Seo from '@/components/Seo';
 import { useGarage, calculateTrustmarqScore } from '@/hooks/useGarages';
 import { useGarageHasOwner } from '@/hooks/useGarageClaims';
 import FavoriteButton from '@/components/FavoriteButton';
@@ -45,8 +46,32 @@ const GarageDetail = () => {
 
   const score = calculateTrustmarqScore(garage.rating, garage.reviews);
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'AutoRepair',
+    name: garage.name,
+    image: garage.images?.[0],
+    address: { '@type': 'PostalAddress', streetAddress: garage.address, addressCountry: 'BE' },
+    telephone: garage.phone,
+    url: garage.website,
+    geo: garage.coords ? { '@type': 'GeoCoordinates', latitude: garage.coords.lat, longitude: garage.coords.lng } : undefined,
+    aggregateRating: garage.reviews > 0 ? {
+      '@type': 'AggregateRating',
+      ratingValue: garage.rating,
+      reviewCount: garage.reviews,
+      bestRating: 5,
+    } : undefined,
+  };
+
   return (
     <div className="min-h-screen bg-background">
+      <Seo
+        title={`${garage.name} — Avis & devis`}
+        description={`${garage.name} à ${garage.address}. ${garage.reviews} avis · note ${garage.rating}/5. Demandez un devis en ligne.`}
+        type="profile"
+        image={garage.images?.[0]}
+        jsonLd={jsonLd}
+      />
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border">
         <div className="max-w-4xl mx-auto px-4 h-14 flex items-center gap-3">
           <Link to="/" className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors">

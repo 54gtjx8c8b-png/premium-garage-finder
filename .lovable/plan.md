@@ -1,67 +1,67 @@
-## Finalisation de l'Espace Pro Garagiste
+# Plan de finalisation Trustmarq — Route vers le lancement
 
-Le squelette du Dashboard existe déjà (`/dashboard`, hooks `useGarageOwnership`, `useReviewResponses`, table `garage_owners`), mais il manque les pièces qui rendent la fonctionnalité réellement utilisable de bout en bout.
+On va avancer par phases courtes et livrables. Je propose qu'on commence **maintenant** par la Phase 1 (la base indispensable pour publier sereinement), puis on enchaîne.
 
-### Constat actuel
+## Phase 1 — Socle de lancement (on commence ici)
 
-- ✅ Page `/dashboard` avec stats, onglets Avis/Devis et formulaire de réponse
-- ✅ Tables `garage_owners`, `review_responses`, `quote_requests` en place
-- ❌ **Aucun moyen pour un garagiste de réclamer sa fiche** → le dashboard est inaccessible en pratique
-- ❌ Pas de lien Dashboard dans `BottomNav` ni `StickyHeader`
-- ❌ Pas de gestion du statut des devis (toujours "En attente")
-- ❌ Pas d'état vide engageant pour l'onboarding pro
+Ce sont les briques sans lesquelles on ne peut pas publier proprement.
 
----
+1. **Robustesse**
+   - `ErrorBoundary` global + page d'erreur stylée
+   - États vides soignés (recherche, avis, devis, véhicules, favoris)
+   - Skeletons cohérents partout
 
-### Étape 1 — Système de "claim" d'une fiche garage
+2. **SEO & partage**
+   - Composant `<Seo />` réutilisable (titres, meta, Open Graph) sur toutes les pages
+   - JSON-LD `LocalBusiness` sur les fiches garages
+   - `sitemap.xml` généré
+   - Manifest PWA + favicon propres
 
-**Objectif** : un utilisateur connecté peut revendiquer un garage existant et devenir `garage_owner` après validation.
+3. **Pages légales (RGPD Belgique)**
+   - Mentions légales, CGU, Politique de confidentialité, Cookies
+   - Bandeau cookies minimal (analytics opt-in)
+   - Page "À propos / Notre méthode" (explique le Trustmarq Score, la vérification des avis → renforce la confiance)
 
-- Créer une table `garage_claims` (id, user_id, garage_id, business_email, justification, status `pending`/`approved`/`rejected`, created_at) avec RLS :
-  - L'utilisateur peut insérer/voir ses propres demandes
-  - Seuls les admins peuvent approuver (utilise le rôle `admin` existant via `has_role`)
-- Trigger : à l'approbation d'un claim, insérer automatiquement la ligne dans `garage_owners`
-- Pour la démo, ajouter une **auto-approbation simple** : un claim s'auto-approuve si l'email professionnel saisi correspond au domaine du `website` du garage (sinon reste `pending`)
+4. **Page publique "Pour les pros"** (`/pro`)
+   - Pitch de valeur + CTA vers `/pro/claim`
+   - Liens depuis le footer
 
-### Étape 2 — Page d'onboarding pro `/pro/claim`
+## Phase 2 — Engagement & confiance
 
-- Nouvelle page `src/pages/ClaimGarage.tsx`
-- Champ recherche/autocomplete sur les garages existants (réutilise `useGarages`)
-- Formulaire : email professionnel + courte justification
-- Affichage de l'état des claims en cours de l'utilisateur
-- Bouton "Accéder au dashboard" si déjà propriétaire
+5. **Emails transactionnels** (Lovable Emails) :
+   nouveau devis reçu, devis accepté/refusé, réponse à un avis, confirmation de revendication
+6. **Centre de notifications in-app** (cloche dans le header, realtime)
+7. **Édition de fiche par le garagiste** (description, horaires, photos via Storage)
 
-### Étape 3 — Améliorer le Dashboard existant
+## Phase 3 — Modération & croissance
 
-- **Bouton de gestion des devis** : passer un devis de `pending` → `accepted` / `rejected` / `completed` (mutation Supabase + toast)
-- **Filtre par statut** sur l'onglet Devis (chips : Tous / En attente / Acceptés / Terminés)
-- **Notification visuelle** : badge "Nouveau" sur les devis ≤ 24 h
-- **État vide amélioré** : si pas de garage owné, CTA "Revendiquer ma fiche" → `/pro/claim` (au lieu du simple message actuel)
+8. **Dashboard admin** (`/admin`, rôle `admin`) : revendications en attente, modération avis, CRUD garages
+9. **Signalement d'avis** côté public
+10. **Stats garagiste** (vues fiche, conversion devis) + export CSV
+11. **Analytics privacy-friendly** (Plausible)
+12. **Élargissement géographique** (Liège, Charleroi, Bruxelles)
 
-### Étape 4 — Navigation
+## Détails techniques Phase 1
 
-- `BottomNav` : remplacer dynamiquement l'onglet "Véhicules" par "Pro" (icône `Briefcase`) si l'utilisateur est `garage_owner`, sinon garder Véhicules. Alternativement, ajouter un 5e onglet conditionnel.
-- `StickyHeader` (desktop) : afficher un lien "Dashboard Pro" dans la nav si owner détecté
-- Sur la page `/profile`, ajouter une carte CTA "Vous êtes garagiste ?" → `/pro/claim`
+- `react-helmet-async` pour les meta (à ajouter)
+- `ErrorBoundary` placé dans `App.tsx` autour des routes
+- Composant `<EmptyState icon title description action />` réutilisable dans `src/components/ui/`
+- Pages légales en routes statiques `/legal/*` avec contenu Markdown rendu
+- Bandeau cookies via `localStorage` (consent stocké), affichage tant que non répondu
+- Sitemap : route `/sitemap.xml` générée côté client à partir des garages (ou statique pour V1)
+- Manifest PWA : `public/manifest.webmanifest` + meta tags dans `index.html`
+- JSON-LD : injecté via `<Seo />` sur `GarageDetail` avec rating, address, phone, openingHours
 
-### Étape 5 — Affichage public côté fiche garage
+## Estimation
 
-- Sur `GarageDetail.tsx`, badge discret "Fiche revendiquée par le propriétaire" si la fiche a au moins un `garage_owner` actif (renforce la confiance)
+Phase 1 = un seul gros run de ma part. Phases 2 et 3 = plusieurs itérations chacune (notamment les emails et l'admin).
 
----
+## Question
 
-### Détails techniques
+Pour la Phase 1, tu veux :
 
-- **Migrations SQL** :
-  - `garage_claims` (avec RLS + trigger d'approbation)
-  - Ajout colonne `status` valeurs `accepted`/`rejected`/`completed` autorisées sur `quote_requests` (déjà text, juste valider)
-- **Nouveaux hooks** : `useGarageClaims`, `useCreateClaim`, `useUpdateQuoteStatus`, `useGarageHasOwner(garageId)`
-- **Nouvelles routes** : `/pro/claim` ajoutée dans `App.tsx`
-- **Fichiers modifiés** : `Dashboard.tsx`, `BottomNav.tsx`, `StickyHeader.tsx`, `Profile.tsx`, `GarageDetail.tsx`, `App.tsx`
-- **Nouveaux fichiers** : `src/pages/ClaimGarage.tsx`, `src/hooks/useGarageClaims.ts`, `src/components/dashboard/QuoteStatusActions.tsx`
+- **A. On y va tel quel** — je livre les 4 sujets de la Phase 1 dans la foulée.
+- **B. On retire la page "À propos / Notre méthode"** (à faire plus tard, tu rédigeras peut-être le texte toi-même).
+- **C. Tu veux d'abord modifier l'ordre** — dis-moi ce que tu veux prioriser ou retirer.
 
-### Hors scope (à faire dans une étape ultérieure)
-
-- Interface admin pour valider manuellement les claims `pending` → on s'appuie sur l'auto-approbation par domaine pour l'instant
-- Statistiques avancées (vues, conversions) → reportées
-- Notifications email → reportées
+Réponds A / B / C et j'attaque dès l'approbation du plan.

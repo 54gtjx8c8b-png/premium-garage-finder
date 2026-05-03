@@ -7,6 +7,8 @@ import ReviewCards from '@/components/ReviewCards';
 import BottomNav from '@/components/BottomNav';
 import HomeMap from '@/components/HomeMap';
 import QuoteComparator from '@/components/QuoteComparator';
+import Seo from '@/components/Seo';
+import Footer from '@/components/Footer';
 import { useGarages } from '@/hooks/useGarages';
 import { useGeolocation } from '@/hooks/useGeolocation';
 
@@ -24,6 +26,21 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-x-hidden">
+      <Seo
+        title="Trustmarq — Comparez les garages automobiles en Belgique"
+        description="Trouvez et comparez les meilleurs garages automobiles près de chez vous. Avis vérifiés, devis instantanés, score de confiance Trustmarq."
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'WebSite',
+          name: 'Trustmarq',
+          url: typeof window !== 'undefined' ? window.location.origin : '',
+          potentialAction: {
+            '@type': 'SearchAction',
+            target: '/?q={search_term_string}',
+            'query-input': 'required name=search_term_string',
+          },
+        }}
+      />
       <StickyHeader searchQuery={searchQuery} onSearchChange={setSearchQuery} />
       <main className="pb-20 md:pb-8 md:pt-4">
         <SearchHero searchQuery={searchQuery} onSearchChange={setSearchQuery} />
@@ -71,6 +88,7 @@ const Index = () => {
         {/* Quote Comparator Section */}
         <QuoteComparator />
       </main>
+      <Footer />
       <BottomNav />
     </div>
   );
