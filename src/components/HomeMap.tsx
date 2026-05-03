@@ -30,7 +30,7 @@ const escapeHtml = (value: string) =>
     .split("'").join('&#39;');
 
 const HomeMap = ({ garages, userPosition, loading, error, onRequestLocation, onClearLocation, radius, onRadiusChange, selectedCity, minRating = 0 }: HomeMapProps) => {
-  const defaultCenter: [number, number] = [46.6, 2.5];
+  const defaultCenter: [number, number] = [50.8503, 4.3517];
 
   const visibleGarages = garages.filter(g => {
     if (selectedCity && !g.address.toLowerCase().includes(selectedCity.toLowerCase())) {
